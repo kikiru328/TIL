@@ -1,20 +1,17 @@
-# Commit to Learn 🚀
+# 🚀 FastAPI Learning Repository
 
-A developer's journey of continuous learning.  
-This repository is a collection of coding experiences, challenges, and insights—one commit at a time.
+This repository is dedicated to learning and experimenting with **FastAPI**, a modern, fast (high-performance) web framework for building APIs with Python.
 
-## 📌 Purpose
-The goal of this repository is to:
-- Document and track my coding progress.
-- Learn new technologies and improve problem-solving skills.
-- Share knowledge and insights gained from various projects.
-- Keep a structured and organized record of my development journey.
+## 📌 What is FastAPI?
+FastAPI is a web framework for building APIs with Python 3.7+ based on **type hints** and **async capabilities**. It is:
+- **Fast**: As the name suggests, it's one of the fastest Python web frameworks.
+- **Easy to Use**: Built-in data validation, dependency injection, and automatic OpenAPI documentation.
+- **Automatic Documentation**: Supports both **Swagger UI** and **ReDoc** out of the box.
 
-## 🔥 How I Use This Repo
-- I regularly update this repo with new insights and learning materials.
-- Each commit represents a step forward in my coding journey.
-- Topics will be refined and expanded over time.
-
-## 💡 Contributions & Feedback
-This repository is primarily for personal learning, but feel free to open issues or suggest improvements.  
-I'm always open to discussions and learning from others!
+## 📌 Learning Topics
+✅ FastAPI Basics (Routing, Request, Response)  
+✅ Dependency Injection & Middleware  
+✅ Database Integration (SQLAlchemy)  
+✅ Authentication & Authorization (OAuth2, JWT)  
+✅ Async & Background Tasks  
+✅ Testing with Pytest  
