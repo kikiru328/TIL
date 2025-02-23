@@ -1,5 +1,5 @@
 # import framework
-from fastapi import FastAPI, Body
+from fastapi import FastAPI, Body, HTTPException
 from pydantic import BaseModel
 
 app = FastAPI()
@@ -29,7 +29,7 @@ def health_check_handler():
     return {"ping": "pong"}
 
 # API: Get Method 2,
-@app.get("/todos", status_code= 200)
+@app.get("/todos", status_code=200) # 200: OK
 def get_todos_handler(order: str | None = None) -> list:
     """
     Get all data from the database according to the specified order.
@@ -43,9 +43,13 @@ def get_todos_handler(order: str | None = None) -> list:
 
 
 # API: Get Method 3,
-@app.get("/todos/{todo_id}")
+@app.get("/todos/{todo_id}", status_code=200)
 def get_todo_by_todo_id_handler(todo_id: int):
-    return todo_data.get(todo_id, {}) # else: return blank dict
+    todo = todo_data.get(todo_id, {})
+    if todo:
+        return todo
+    raise HTTPException(status_code=404, detail="ToDo Not Found") #no todo id
+    #return todo_data.get(todo_id, {}) # else: return blank dict
 
 # API: Post Method
 class CreateToDoRequest(BaseModel):
@@ -56,26 +60,30 @@ class CreateToDoRequest(BaseModel):
     contents: str
     is_done: bool
 
-@app.post("/todos")
+@app.post("/todos", status_code=201) # create
 def create_todo_handler(request: CreateToDoRequest):
     todo_data[request.id] = request.dict() # BaseModel Method
     return todo_data[request.id]
 
 # API: Patch Method
-@app.patch("/todos/{todo_id}")
+@app.patch("/todos/{todo_id}", status_code=200) # OK
 def update_todo_handler(
         todo_id: int,
-        is_done: bool = Body(..., embed=True) #request body 중 하나 ㅓ전달
+        is_done: bool = Body(..., embed=True) #request body 중 하나만 전달
 ):
     todo = todo_data.get(todo_id)
     if todo:
         todo["is_done"] = is_done
-    return {}
+        return todo
+    raise HTTPException(status_code=404, detail="ToDo Not Found")
 
 # API: Delete Method
-@app.delete("/todos/{todo_id}")
+@app.delete("/todos/{todo_id}", status_code=204) # No Content
 def delete_todo_handler(todo_id: int):
-    todo_data.pop(todo_id, None)
+    todo = todo_data.pop(todo_id, None)
+    if not todo:
+        raise HTTPException(status_code=404, detail="ToDo Not Found")
+    # no return.
 
 # try : uvicorn main:app
 # * uvicorn main:app --reload (auto reload)
