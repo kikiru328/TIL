@@ -1,17 +1,33 @@
-# 🚀 FastAPI Learning Repository
+# Commit_to_learn
 
-This repository is dedicated to learning and experimenting with **FastAPI**, a modern, fast (high-performance) web framework for building APIs with Python.
+## 📌 소개
+이 저장소는 FastAPI 및 알고리즘 학습을 위한 공간입니다. 각 디렉터리는 해당 주제에 대한 학습 자료, 코드 및 실습 내용을 포함하고 있습니다.
 
-## 📌 What is FastAPI?
-FastAPI is a web framework for building APIs with Python 3.7+ based on **type hints** and **async capabilities**. It is:
-- **Fast**: As the name suggests, it's one of the fastest Python web frameworks.
-- **Easy to Use**: Built-in data validation, dependency injection, and automatic OpenAPI documentation.
-- **Automatic Documentation**: Supports both **Swagger UI** and **ReDoc** out of the box.
+## 📂 디렉터리 구조
 
-## 📌 Learning Topics
-✅ FastAPI Basics (Routing, Request, Response)  
-✅ Dependency Injection & Middleware  
-✅ Database Integration (SQLAlchemy)  
-✅ Authentication & Authorization (OAuth2, JWT)  
-✅ Async & Background Tasks  
-✅ Testing with Pytest  
+```
+Commit_to_learn/
+│── FastAPI/          # FastAPI 관련 학습 자료 및 프로젝트 코드
+│── Algorithm/        # 알고리즘 문제 풀이 및 관련 자료
+```
+
+### 📁 FastAPI
+FastAPI를 활용한 웹 애플리케이션 개발 및 실습 코드가 포함됩니다.
+- 기본적인 FastAPI 설정
+- API 엔드포인트 구현
+- 데이터베이스 연동
+- 테스트 코드 작성
+
+### 📁 Algorithm
+알고리즘 문제 풀이 및 해설을 포함합니다.
+- 정렬, 탐색, 재귀 등 다양한 알고리즘 문제 풀이
+- Python을 활용한 효율적인 코드 작성법
+- 알고리즘 문제 풀이 과정 설명
+
+## 🚀 목표
+- FastAPI를 활용한 웹 애플리케이션 개발 능력 향상
+- 알고리즘 문제 해결을 통한 문제 해결력 강화
+
+## 📌 업데이트 예정
+- FastAPI 프로젝트 구조 개선
+- 더 많은 알고리즘 문제 풀이 추가
