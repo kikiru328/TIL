@@ -78,7 +78,7 @@ def test_update_todo(client, mocker):
         return_value=ToDo(id=1, contents="todo", is_done=True),
     )
 
-    undone = mocker.path.object(ToDo, "undone")
+    undone = mocker.patch.object(ToDo, "undone")
     mocker.patch(
         "main.update_todo",
         return_value=ToDo(id=1, contents="todo", is_done=False),
