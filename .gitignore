@@ -1,1 +1,5 @@
 .idea/
+todos/bin/
+todos/include/
+todos/lib/
+todos/pyvenv.cfg
