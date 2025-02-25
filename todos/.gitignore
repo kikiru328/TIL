@@ -12,3 +12,6 @@ pip-delete-this-directory.txt
 
 # Poetry 또는 pip의 site-packages 폴더 무시
 **/site-packages/
+bin/
+include/
+lib/
