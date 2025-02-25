@@ -15,3 +15,4 @@ FastAPI is a web framework for building APIs with Python 3.7+ based on **type hi
 ✅ Authentication & Authorization (OAuth2, JWT)  
 ✅ Async & Background Tasks  
 ✅ Testing with Pytest  
+ 
