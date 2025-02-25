@@ -1,5 +1,5 @@
 .idea/
-todos/bin/
-todos/include/
-todos/lib/
-todos/pyvenv.cfg
+FastAPI/todos/bin/
+FastAPI/todos/include/
+FastAPI/todos/lib/
+FastAPI/todos/pyvenv.cfg
