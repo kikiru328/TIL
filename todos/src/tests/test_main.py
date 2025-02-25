@@ -1,16 +1,12 @@
-from fastapi.testclient import TestClient # for test
-
 from database.orm import ToDo
-from main import app
 
-client = TestClient(app=app) # sending API
 
-def test_health_check():
+def test_health_check(client):
     response = client.get("/") # ping: pong
     assert response.status_code == 200
     assert response.json() == {"ping": "pong"}
 
-def test_get_todos(mocker):
+def test_get_todos(client, mocker):
     # mocking before functions work
     mocker.patch("main.get_todos", return_value=[
         ToDo(id=1, contents="FastAPI Section 0", is_done=True),
