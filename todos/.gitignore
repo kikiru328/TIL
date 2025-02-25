@@ -1,0 +1,14 @@
+# Python virtual environment 관련 파일
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+*.log
+venv/
+env/
+.virtualenvs/
+pip-log.txt
+pip-delete-this-directory.txt
+
+# Poetry 또는 pip의 site-packages 폴더 무시
+**/site-packages/
