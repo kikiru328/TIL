@@ -1,6 +1,13 @@
 # import framework
-from fastapi import FastAPI, Body, HTTPException
-from pydantic import BaseModel
+from typing import List
+
+from fastapi import FastAPI, Body, HTTPException, Depends
+from sqlalchemy.orm import Session
+from database.connection import get_db
+from database.orm import ToDo
+from database.repository import get_todos, get_todo_by_todo_id, create_todo, update_todo, delete_todo
+from schema.request import CreateToDoRequest
+from schema.response import ToDoListSchema, ToDoSchema
 
 app = FastAPI()
 
@@ -30,60 +37,76 @@ def health_check_handler():
 
 # API: Get Method 2,
 @app.get("/todos", status_code=200) # 200: OK
-def get_todos_handler(order: str | None = None) -> list:
+def get_todos_handler(
+        order: str | None = None,
+        session: Session = Depends(get_db)
+) -> ToDoListSchema:
     """
     Get all data from the database according to the specified order.
     The order is requested based on the query.
     e.g., "/todos?order=DESC"
     """
-    ret = list(todo_data.values())
+    todos: List[ToDo] = get_todos(session=session) # from db
     if order and order == "DESC": #decending
-        return ret[::-1]
-    return ret #default == ascending
+        return ToDoListSchema(
+            todos=[ToDoSchema.from_orm(todo) for todo in todos[::-1]]
+        )
+    #return todos #default == ascending
+    return ToDoListSchema(
+        todos=[ToDoSchema.from_orm(todo) for todo in todos]
+    )
 
 
 # API: Get Method 3,
 @app.get("/todos/{todo_id}", status_code=200)
-def get_todo_by_todo_id_handler(todo_id: int):
-    todo = todo_data.get(todo_id, {})
+def get_todo_by_todo_id_handler(
+        todo_id: int,
+        session: Session = Depends(get_db)
+) -> ToDoSchema:
+    todo: ToDo | None = get_todo_by_todo_id(session=session, todo_id=todo_id)
     if todo:
-        return todo
+        return ToDoSchema.from_orm(todo)
     raise HTTPException(status_code=404, detail="ToDo Not Found") #no todo id
     #return todo_data.get(todo_id, {}) # else: return blank dict
 
-# API: Post Method
-class CreateToDoRequest(BaseModel):
-    """
-    Create Request Body (Format)
-    """
-    id: int
-    contents: str
-    is_done: bool
-
 @app.post("/todos", status_code=201) # create
-def create_todo_handler(request: CreateToDoRequest):
-    todo_data[request.id] = request.dict() # BaseModel Method
-    return todo_data[request.id]
+def create_todo_handler(
+        request: CreateToDoRequest,
+        session: Session = Depends(get_db),
+) -> ToDoSchema:
+    todo: ToDo = ToDo.create(request=request)
+    todo: ToDo = create_todo(session=session, todo=todo) # id:int
+
+    #todo_data[request.id] = request.dict() # BaseModel Method
+    #return todo_data[request.id]
+    return ToDoSchema.from_orm(todo)
 
 # API: Patch Method
 @app.patch("/todos/{todo_id}", status_code=200) # OK
 def update_todo_handler(
         todo_id: int,
-        is_done: bool = Body(..., embed=True) #request body 중 하나만 전달
+        is_done: bool = Body(..., embed=True),
+        session: Session = Depends(get_db), #request body 중 하나만 전달
 ):
-    todo = todo_data.get(todo_id)
+    # todo = todo_data.get(todo_id)
+    todo: ToDo | None = get_todo_by_todo_id(session=session, todo_id=todo_id)
     if todo:
-        todo["is_done"] = is_done
-        return todo
+        todo.done() if is_done else todo.undone()
+        todo: ToDo = update_todo(session=session, todo=todo)
+        return ToDoSchema.from_orm(todo)
     raise HTTPException(status_code=404, detail="ToDo Not Found")
 
 # API: Delete Method
 @app.delete("/todos/{todo_id}", status_code=204) # No Content
-def delete_todo_handler(todo_id: int):
-    todo = todo_data.pop(todo_id, None)
+def delete_todo_handler(
+        todo_id: int,
+        session: Session = Depends(get_db)
+):
+    #todo = todo_data.pop(todo_id, None)
+    todo: ToDo | None = get_todo_by_todo_id(session=session, todo_id=todo_id)
     if not todo:
         raise HTTPException(status_code=404, detail="ToDo Not Found")
-    # no return.
+    delete_todo(session=session, todo_id=todo_id)
 
 # try : uvicorn main:app
 # * uvicorn main:app --reload (auto reload)
