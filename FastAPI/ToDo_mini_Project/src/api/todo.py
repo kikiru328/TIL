@@ -9,9 +9,9 @@ from database.repository import get_todos, get_todo_by_todo_id, create_todo, upd
 from schema.request import CreateToDoRequest
 from schema.response import ToDoListSchema, ToDoSchema
 
-router = APIRouter() # Connect API with main
+router = APIRouter(prefix="/todos") # Connect API with main & prefix todos
 
-@router.get("/todos", status_code=200) # 200: OK
+@router.get("", status_code=200) # 200: OK
 def get_todos_handler(
         order: str | None = None,
         session: Session = Depends(get_db)
@@ -32,7 +32,7 @@ def get_todos_handler(
     )
 
 
-@router.get("/todos/{todo_id}", status_code=200)
+@router.get("/{todo_id}", status_code=200)
 def get_todo_by_todo_id_handler(
         todo_id: int,
         session: Session = Depends(get_db)
@@ -44,7 +44,7 @@ def get_todo_by_todo_id_handler(
     #return todo_data.get(todo_id, {}) # else: return blank dict
 
 
-@router.post("/todos", status_code=201) # create
+@router.post("", status_code=201) # create
 def create_todo_handler(
         request: CreateToDoRequest,
         session: Session = Depends(get_db),
@@ -57,7 +57,7 @@ def create_todo_handler(
     return ToDoSchema.from_orm(todo)
 
 
-@router.patch("/todos/{todo_id}", status_code=200) # OK
+@router.patch("/{todo_id}", status_code=200) # OK
 def update_todo_handler(
         todo_id: int,
         is_done: bool = Body(..., embed=True),
@@ -72,7 +72,7 @@ def update_todo_handler(
     raise HTTPException(status_code=404, detail="ToDo Not Found")
 
 
-@router.delete("/todos/{todo_id}", status_code=204) # No Content
+@router.delete("/{todo_id}", status_code=204) # No Content
 def delete_todo_handler(
         todo_id: int,
         session: Session = Depends(get_db)
