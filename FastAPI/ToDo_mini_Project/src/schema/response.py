@@ -7,5 +7,5 @@ class ToDoSchema(BaseModel):
     contents: str
     is_done: bool
 
-class ListToDoResponse(BaseModel):
+class ToDoListSchema(BaseModel):
     todos: List[ToDoSchema]
