@@ -103,3 +103,4 @@ def delete_todo_handler(
     todo: ToDo | None = get_todo_by_todo_id(session=session, todo_id=todo_id)
     if not todo:
         raise HTTPException(status_code=404, detail="ToDo Not Found")
+    delete_todo(session=session, todo_id=todo_id)
