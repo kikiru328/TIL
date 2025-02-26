@@ -1,5 +1,6 @@
 from database.orm import ToDo
 
+
 def test_health_check(client):
     response = client.get("/") # ping: pong
     assert response.status_code == 200
@@ -17,8 +18,7 @@ def test_get_todos(client, mocker):
     assert response.json() == {
         "todos": [
             {"id": 1, "contents": "FastAPI Section 0", "is_done": True},
-            {"id": 2, "contents": "FastAPI Section 1", "is_done": True},
-            {"id": 3, "contents": "FastAPI Section 2", "is_done": False},
+            {"id": 2, "contents": "FastAPI Section 1", "is_done": False},
         ]
     }
 
@@ -27,8 +27,7 @@ def test_get_todos(client, mocker):
     assert response.status_code == 200
     assert response.json() == {
         "todos": [
-            {"id": 3, "contents": "FastAPI Section 2", "is_done": False},
-            {"id": 2, "contents": "FastAPI Section 1", "is_done": True},
+            {"id": 2, "contents": "FastAPI Section 1", "is_done": False},
             {"id": 1, "contents": "FastAPI Section 0", "is_done": True},
         ]
     }
