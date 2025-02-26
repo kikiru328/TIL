@@ -1,4 +1,4 @@
-# framework
+# import framework
 from typing import List
 
 from fastapi import FastAPI, Body, HTTPException, Depends
@@ -11,12 +11,7 @@ from schema.response import ToDoListSchema, ToDoSchema
 
 app = FastAPI()
 
-# API: Get method
-@app.get("/")
-def health_check_handler():
-    return {"ping": "pong"}
-
-# Temporary Database
+# DB
 todo_data = {
     1: {
         "id": 1,
@@ -35,6 +30,11 @@ todo_data = {
     }
 }
 
+# API: Get Method 1
+@app.get("/")
+def health_check_handler():
+    return {"ping": "pong"}
+
 # API: Get Method 2,
 @app.get("/todos", status_code=200) # 200: OK
 def get_todos_handler(
@@ -51,10 +51,11 @@ def get_todos_handler(
         return ToDoListSchema(
             todos=[ToDoSchema.from_orm(todo) for todo in todos[::-1]]
         )
-    #return todos
+    #return todos #default == ascending
     return ToDoListSchema(
         todos=[ToDoSchema.from_orm(todo) for todo in todos]
     )
+
 
 # API: Get Method 3,
 @app.get("/todos/{todo_id}", status_code=200)
@@ -66,8 +67,9 @@ def get_todo_by_todo_id_handler(
     if todo:
         return ToDoSchema.from_orm(todo)
     raise HTTPException(status_code=404, detail="ToDo Not Found") #no todo id
+    #return todo_data.get(todo_id, {}) # else: return blank dict
 
-# API: Post Method
+@app.post("/todos", status_code=201) # create
 def create_todo_handler(
         request: CreateToDoRequest,
         session: Session = Depends(get_db),
@@ -86,6 +88,7 @@ def update_todo_handler(
         is_done: bool = Body(..., embed=True),
         session: Session = Depends(get_db), #request body 중 하나만 전달
 ):
+    # todo = todo_data.get(todo_id)
     todo: ToDo | None = get_todo_by_todo_id(session=session, todo_id=todo_id)
     if todo:
         todo.done() if is_done else todo.undone()
@@ -104,3 +107,6 @@ def delete_todo_handler(
     if not todo:
         raise HTTPException(status_code=404, detail="ToDo Not Found")
     delete_todo(session=session, todo_id=todo_id)
+
+# try : uvicorn main:app
+# * uvicorn main:app --reload (auto reload)
