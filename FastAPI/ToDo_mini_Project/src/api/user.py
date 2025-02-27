@@ -2,7 +2,7 @@
 from fastapi import APIRouter, Depends
 from database.orm import User
 from database.repository import UserRepository
-from schema.request import SignUpRequset
+from schema.request import SignUpRequest
 from schema.response import UserSchema
 from service.user import UserService
 
@@ -11,7 +11,7 @@ router = APIRouter(prefix="/users")
 @router.post("/sign-up", status_code=201)
 def user_sign_up_handler(
         # 1. request body (username, password) >> request
-        request: SignUpRequset,
+        request: SignUpRequest,
         user_service: UserService = Depends(),
         user_repo: UserRepository = Depends()
 ):
