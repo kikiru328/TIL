@@ -9,6 +9,7 @@ def test_user_sign_up(client, mocker):
         return_value="hashed"
     )
 
+
     user_create = mocker.patch.object(
         User,
         "create",
