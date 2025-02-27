@@ -6,7 +6,8 @@ from sqlalchemy import select, delete
 from sqlalchemy.orm import Session
 
 from database.connection import get_db
-from database.orm import ToDo
+from database.orm import ToDo, User
+
 
 class ToDoRepository:
     def __init__(self, session: Session = Depends(get_db)):
