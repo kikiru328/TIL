@@ -28,5 +28,6 @@ class UserService:
                 "sub": username,
                 "exp": datetime.now() + timedelta(days=1),
              },
-            algorithm=self.jwt_algorithm
+            self.secret_key,
+            algorithm=self.jwt_algorithm,
         )
