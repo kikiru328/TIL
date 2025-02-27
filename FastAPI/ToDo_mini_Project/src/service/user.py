@@ -2,6 +2,7 @@ import bcrypt
 from jose import jwt
 from datetime import datetime, timedelta
 import random
+import time
 
 class UserService:
     encoding: str = "UTF-8"
@@ -44,3 +45,8 @@ class UserService:
     @staticmethod
     def create_otp() -> int:
         return random.randint(1000, 9999)
+
+    @staticmethod
+    def send_email_to_user(email: str) -> None:
+        time.sleep(10)
+        print(f"Sending email to {email}!")
