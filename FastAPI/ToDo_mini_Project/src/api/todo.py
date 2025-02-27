@@ -5,7 +5,7 @@ from sqlalchemy.orm import Session
 
 from database.connection import get_db
 from database.orm import ToDo
-from database.repository import get_todos, get_todo_by_todo_id, create_todo, update_todo, delete_todo
+from database.repository import ToDoRepository
 from schema.request import CreateToDoRequest
 from schema.response import ToDoListSchema, ToDoSchema
 
@@ -14,14 +14,14 @@ router = APIRouter(prefix="/todos") # Connect API with main & prefix todos
 @router.get("", status_code=200) # 200: OK
 def get_todos_handler(
         order: str | None = None,
-        session: Session = Depends(get_db)
+        todo_repo: ToDoRepository = Depends()
 ) -> ToDoListSchema:
     """
     Get all data from the database according to the specified order.
     The order is requested based on the query.
     e.g., "/todos?order=DESC"
     """
-    todos: List[ToDo] = get_todos(session=session) # from db
+    todos: List[ToDo] = todo_repo.get_todos() # from db
     if order and order == "DESC": #decending
         return ToDoListSchema(
             todos=[ToDoSchema.from_orm(todo) for todo in todos[::-1]]
@@ -35,9 +35,9 @@ def get_todos_handler(
 @router.get("/{todo_id}", status_code=200)
 def get_todo_by_todo_id_handler(
         todo_id: int,
-        session: Session = Depends(get_db)
+        todo_repo: ToDoRepository = Depends()
 ) -> ToDoSchema:
-    todo: ToDo | None = get_todo_by_todo_id(session=session, todo_id=todo_id)
+    todo: ToDo | None = todo_repo.get_todo_by_todo_id(todo_id=todo_id)
     if todo:
         return ToDoSchema.from_orm(todo)
     raise HTTPException(status_code=404, detail="ToDo Not Found")
@@ -47,10 +47,10 @@ def get_todo_by_todo_id_handler(
 @router.post("", status_code=201) # create
 def create_todo_handler(
         request: CreateToDoRequest,
-        session: Session = Depends(get_db),
+        todo_repo: ToDoRepository = Depends(),
 ) -> ToDoSchema:
     todo: ToDo = ToDo.create(request=request)
-    todo: ToDo = create_todo(session=session, todo=todo) # id:int
+    todo: ToDo = todo_repo.create_todo(todo=todo) # id:int
 
     #todo_data[request.id] = request.dict() # BaseModel Method
     #return todo_data[request.id]
@@ -61,13 +61,13 @@ def create_todo_handler(
 def update_todo_handler(
         todo_id: int,
         is_done: bool = Body(..., embed=True),
-        session: Session = Depends(get_db), #request body 중 하나만 전달
+        todo_repo: ToDoRepository = Depends(),
 ):
 
-    todo: ToDo | None = get_todo_by_todo_id(session=session, todo_id=todo_id)
+    todo: ToDo | None = todo_repo.get_todo_by_todo_id(todo_id=todo_id)
     if todo:
         todo.done() if is_done else todo.undone()
-        todo: ToDo = update_todo(session=session, todo=todo)
+        todo: ToDo = todo_repo.update_todo(todo=todo)
         return ToDoSchema.from_orm(todo)
     raise HTTPException(status_code=404, detail="ToDo Not Found")
 
@@ -75,9 +75,9 @@ def update_todo_handler(
 @router.delete("/{todo_id}", status_code=204) # No Content
 def delete_todo_handler(
         todo_id: int,
-        session: Session = Depends(get_db)
+        todo_repo: ToDoRepository = Depends()
 ):
-    todo: ToDo | None = get_todo_by_todo_id(session=session, todo_id=todo_id)
+    todo: ToDo | None = todo_repo.get_todo_by_todo_id(todo_id=todo_id)
     if not todo:
         raise HTTPException(status_code=404, detail="ToDo Not Found")
-    delete_todo(session=session, todo_id=todo_id)
+    todo_repo.delete_todo(todo_id=todo_id)
