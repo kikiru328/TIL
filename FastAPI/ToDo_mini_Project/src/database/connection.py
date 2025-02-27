@@ -5,7 +5,8 @@ from sqlalchemy.orm import sessionmaker
 DATABASE_URL = "mysql+pymysql://root:todos@127.0.0.1:3306/todos"
 
 # for connection
-engine = create_engine(DATABASE_URL, echo=True) # re-print sql query
+#engine = create_engine(DATABASE_URL, echo=True) # re-print sql query
+engine = create_engine(DATABASE_URL)
 SessionFactory = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 
 # Generator

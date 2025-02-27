@@ -4,24 +4,30 @@ from fastapi import Depends, HTTPException, Body, APIRouter
 from sqlalchemy.orm import Session
 
 from database.connection import get_db
-from database.orm import ToDo
-from database.repository import ToDoRepository
+from database.orm import ToDo, User
+from database.repository import ToDoRepository, UserRepository
 from schema.request import CreateToDoRequest
 from schema.response import ToDoListSchema, ToDoSchema
+from security import get_access_token
+from service.user import UserService
 
 router = APIRouter(prefix="/todos") # Connect API with main & prefix todos
 
 @router.get("", status_code=200) # 200: OK
 def get_todos_handler(
+        access_token: str = Depends(get_access_token),
         order: str | None = None,
-        todo_repo: ToDoRepository = Depends()
+        user_service: UserService = Depends(),
+        user_repo: UserRepository = Depends(),
+        todo_repo: ToDoRepository = Depends(),
 ) -> ToDoListSchema:
-    """
-    Get all data from the database according to the specified order.
-    The order is requested based on the query.
-    e.g., "/todos?order=DESC"
-    """
-    todos: List[ToDo] = todo_repo.get_todos() # from db
+
+    username: str = user_service.decode_jwt(access_token=access_token)
+    user: User | None = user_repo.get_user_by_username(username=username)
+    if not user:
+        raise HTTPException(status_code=404, detail="User not Found")
+    todos: List[ToDo] = user.todos
+
     if order and order == "DESC": #decending
         return ToDoListSchema(
             todos=[ToDoSchema.from_orm(todo) for todo in todos[::-1]]
