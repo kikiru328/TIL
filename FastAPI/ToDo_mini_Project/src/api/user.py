@@ -1,9 +1,12 @@
 # router
 from fastapi import APIRouter, Depends, HTTPException
+
+from cache import redis_client
 from database.orm import User
 from database.repository import UserRepository
-from schema.request import SignUpRequest, LogInRequest
+from schema.request import SignUpRequest, LogInRequest, CreateOTPRequest
 from schema.response import UserSchema, JWTResponse
+from security import get_access_token
 from service.user import UserService
 
 router = APIRouter(prefix="/users")
@@ -53,3 +56,30 @@ def user_log_in_handler(
     access_token: str = user_service.create_jwt(username=user.username)
     # 5. return jwt
     return JWTResponse(access_token=access_token)
+
+    # sign-in (username, password) / log-in
+    # email alert: sign-in > email otp > save user email > email alert
+    # POST /users/email/otp -> otp(key: email, value: 1234, exp: 3min)
+    # POST /users/email/otp/verify > request(email, otp) > user(email)
+
+@router.post("/email/otp")
+def create_otp_handler(
+    request: CreateOTPRequest,
+    _: str = Depends(get_access_token), # no use but in header
+    user_service: UserService = Depends(),
+):
+    # 1. access_token
+    # 2. request body(email)
+    # 3. otp create(random 4 digit)
+    otp: int = user_service.create_otp()
+
+    # 4. redis otp(email:1234, exp=3min)
+    redis_client.set(request.email, otp)
+    redis_client.expire(request.email, 3 * 60)
+    # 5. send otp to email
+    return {"otp": otp}
+
+@router.post("/email/otp/verify")
+def verify_otp_handler():
+    return
+
