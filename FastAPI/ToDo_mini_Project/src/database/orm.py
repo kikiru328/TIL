@@ -1,5 +1,5 @@
 from sqlalchemy.orm import declarative_base
-from sqlalchemy import Boolean, Column, Integer, String
+from sqlalchemy import Boolean, Column, Integer, String, ForeignKey
 from schema.request import CreateToDoRequest
 
 Base = declarative_base() # default format
@@ -8,8 +8,9 @@ class ToDo(Base):
     __tablename__ = "todo"
 
     id = Column(Integer, primary_key=True, index=True)
-    contents = Column(String, nullable=False)
+    contents = Column(String(256), nullable=False)
     is_done = Column(Boolean, nullable=False)
+    user_id = Column(Integer, ForeignKey("user.id")) # Connect other table
 
     # repr: re-print
     def __repr__(self):
@@ -29,3 +30,11 @@ class ToDo(Base):
     def undone(self) -> "ToDo":
         self.is_done = False
         return self
+
+class User(Base): #Modeling
+    __tablename__ = "user"
+
+    id = Column(Integer, primary_key=True, index=True)
+    username = Column(String(256), nullable=False)
+    password = Column(String(256), nullable=False)
+
