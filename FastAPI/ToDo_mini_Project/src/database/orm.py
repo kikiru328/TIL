@@ -39,5 +39,9 @@ class User(Base): #Modeling
     password = Column(String(256), nullable=False)
     todos = relationship("ToDo", lazy="joined") #connect
 
-
-
+    @classmethod
+    def create(cls, username: str, hashed_password: str) -> "User":
+        return cls(
+            username=username,
+            hashed_password=hashed_password,
+        )

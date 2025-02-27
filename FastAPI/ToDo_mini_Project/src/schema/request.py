@@ -8,3 +8,7 @@ class CreateToDoRequest(BaseModel):
     """
     contents: str
     is_done: bool
+
+class SignUpRequset(BaseModel):
+    username: str
+    password: str
