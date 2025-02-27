@@ -1,9 +1,6 @@
 from typing import List
 
 from fastapi import Depends, HTTPException, Body, APIRouter
-from sqlalchemy.orm import Session
-
-from database.connection import get_db
 from database.orm import ToDo, User
 from database.repository import ToDoRepository, UserRepository
 from schema.request import CreateToDoRequest
@@ -19,7 +16,6 @@ def get_todos_handler(
         order: str | None = None,
         user_service: UserService = Depends(),
         user_repo: UserRepository = Depends(),
-        todo_repo: ToDoRepository = Depends(),
 ) -> ToDoListSchema:
 
     username: str = user_service.decode_jwt(access_token=access_token)
