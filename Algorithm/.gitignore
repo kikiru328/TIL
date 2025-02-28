@@ -6,3 +6,4 @@ pyvenv.cfg
 .idea/
 *.zip
 lib64
+.DS_Store
