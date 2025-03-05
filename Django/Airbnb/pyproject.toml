@@ -1,7 +1,7 @@
 [project]
-name = "airbnb"
+name = "airbnb-django"
 version = "0.1.0"
-description = "Django Class: Airbnb clone"
+description = "Airbnb Django clone coding from NomadCoder"
 authors = [
     {name = "kikiru328",email = "kikiru328@gmail.com"}
 ]
