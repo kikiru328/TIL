@@ -6,6 +6,16 @@ from .models import House
 
 @admin.register(House)
 class HouseAdmin(admin.ModelAdmin):
+
+    fields: Tuple[str] = (
+        "name",
+        "address",
+        (
+            "price_per_night",
+            "pets_allowed",
+        )
+
+    )
     list_display: Tuple[str] = (
         "name",
         "price_per_night",
@@ -20,4 +30,9 @@ class HouseAdmin(admin.ModelAdmin):
 
     search_fields: Tuple[str] = (
         "address__startswith",
+    )
+
+    list_display_links: Tuple[str] = (
+        "name",
+        "address",
     )
