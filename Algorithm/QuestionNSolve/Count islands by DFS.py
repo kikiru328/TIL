@@ -65,35 +65,6 @@ def island_dfs_stack(grid):
 
     return count_island
 
-
-# def island_dfs_recursive(grid):
-#     rows = len(grid)
-#     columns = len(grid[0])
-#     count_island = 0
-#     def dfs_recursive(row, column):
-#         grid[row][column] = '0' # 방문처리
-#         # 상하좌우 방문
-#         dr = [-1, 1, 0, 0] # 상 하
-#         dc = [0, 0, -1, 1] # 좌 우
-#         for i in range(4):
-#             new_row = row + dr[i]
-#             new_column = column + dc[i]
-#
-#             if (new_row < 0 or new_row >= rows
-#                 or new_column < 0 or new_column >= columns
-#                 or grid[new_row][new_column] != '1'):
-#                 continue
-#
-#                 dfs_recursive(new_row, new_column)
-#
-#     for r in range(rows):
-#         for c in range(columns):
-#             if grid[r][c] != '1':
-#                 continue
-#
-#             count_island += 1
-#             dfs_recursive(r, c)
-#     return count_island
 def island_dfs_recursive(grid):
     dx = [0, 0, 1, -1]
     dy = [1, -1, 0, 0]
