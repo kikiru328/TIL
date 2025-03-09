@@ -56,5 +56,18 @@ class Comment(Base):
     content = Column(String(300), nullable=False)
     created_at = Column(DateTime, default=func.now())
 
+class Follow(Base):
+    __tablename__ = "follows"
+
+    id = Column(Integer, primary_key=True, index=True)
+    follower_id = Column(Integer, ForeignKey("users.id"), nullable=False)
+    following_id = Column(Integer, ForeignKey("users.id"), nullable=False)
+
+    __table_args__ = (UniqueConstraint(
+        "follower_id", "following_id", name="unique_follow"
+    ),)
+
+    follower = relationship("User", foreign_keys=[follower_id])
+    following = relationship("User", foreign_keys=[following_id])
 
 

@@ -38,3 +38,10 @@ class CommentSchema(BaseModel):
 
     class Config:
         orm_mode = True
+
+class FollowSchema(BaseModel):
+    follower_id: int
+    following_id: int
+
+    class Config:
+        orm_mode = True

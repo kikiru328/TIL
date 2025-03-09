@@ -1,8 +1,8 @@
 from fastapi import Depends
 from sqlalchemy.orm import Session
-from sqlalchemy import select
+from sqlalchemy import select, desc
 from database.connection import get_db
-from database.orm import User, Post, Like, Comment
+from database.orm import User, Post, Like, Comment, Follow
 from sqlalchemy import func
 
 
@@ -125,3 +125,59 @@ class CommentRepository:
         if comment and comment.user_id == user_id:
             self.session.delete(comment)
             self.session.commit()
+
+class FollowRepository:
+    def __init__(self, session: Session = Depends(get_db)):
+        self.session = session
+
+    def create_follow(self, follower_id: int, following_id: id) -> Follow:
+        follow = Follow(follower_id=follower_id, following_id=following_id)
+        self.session.add(follow)
+        self.session.commit()
+        self.session.refresh(follow)
+        return follow
+
+    def delete_follow(self,  follower_id: int, following_id: id) -> None:
+        follow = self.session.scalar(
+            select(Follow).where(
+                Follow.follower_id == follower_id,
+                Follow.following_id == following_id
+            )
+        )
+
+        if follow:
+            self.session.delete(follow)
+            self.session.commit()
+
+    def get_following_list(self, user_id: int) -> list[Follow]:
+        return list(
+            self.session.scalars(
+                select(Follow).where(Follow.follower_id == user_id)
+            ).all()
+        )
+
+    def get_followers_list(self, user_id: int) -> list[Follow]:
+        return list(
+            self.session.scalars(
+                select(Follow).where(Follow.following_id == user_id)
+            ).all()
+        )
+
+class NewsfeedRepository:
+    def __init__(self, session: Session = Depends(get_db)):
+        self.session = session
+
+    def get_newsfeed(self, user_id: int, limit: int = 10, offset: int = 0) -> list[Post]:
+        following_ids = self.session.scalars(
+            select(Follow.following_id).where(Follow.follower_id == user_id)
+        ).all()
+
+        if not following_ids:
+            return []
+        return list(self.session.scalars(
+            select(Post)
+            .where(Post.user_id.in_(following_ids))
+            .order_by(desc(Post.created_at))
+            .limit(limit)
+            .offset(offset)
+        ).all())
