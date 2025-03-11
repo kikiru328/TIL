@@ -32,54 +32,54 @@ Q. 미로 탈출 경로 찾기
 """
 from collections import deque
 
-maze = [
-    ["1", "1", "1", "0", "1"],
-    ["1", "0", "1", "0", "1"],
-    ["1", "0", "1", "0", "1"],
-    ["1", "1", "1", "1", "1"],
-]
 # BFS: 너비 우선 탐색. Queue를 사용한다.
 # 상하좌우를 방문하는 것을 염두해둬야 한다.
 # 미로의 (0,0)에서 시작한다.
 # 상하좌우를 이동하면서 1이면 경로 길이의 1을 추가한다.
 # 만약 다음 이동이 가능한 곳이 (N-1, M-1)일 경우 경로 길이에 1을 추가하고 종료.
+# 방문시 해당 경로를 다시 가지 않는다: 최단거리
 
+def escape_maze(maze) -> int:
 # 우선 maze를 만든다
-rows = len(maze)
-columns = len(maze[0])
+    rows = len(maze)
+    columns = len(maze[0])
 
-# 상하좌우 움직이는 컨트롤러
-direction_rows = [0, 0, 1, -1] # 상하
-direction_columns = [1, -1, 0, 0] # 좌우
+    # 상하좌우 움직이는 컨트롤러
+    direction_rows = [0, 0, 1, -1] # 상하
+    direction_columns = [1, -1, 0, 0] # 좌우
 
-# 이동 경로
-move_count = 0
+    # 방문
+    visited = [[False] * columns for _ in range(rows)]
 
+    # 시작 경로에서 움직이는 것이 중요.
+    deq = deque()
+    visited[0][0] = True # 시작경로 움직임
+    deq.append((0, 0, 1)) # row, column, "move count"
 
-# 행과 열로 움직이게 함
-for row in range(rows):
-    for column in range(columns):
-        if maze[row][column] != "1": # 0일 경우
-            continue
+    while deq: #maze에서 빠져나가기 전 까지
+        # 상하좌우를 움직여보자
+        current_row, current_column, move_count = deq.popleft()
 
-        else: # 1일 경우
-            move_count += 1 # 이동 + 1
-            deq = deque() # direction
-            deq.append((row, column)) # 시작단계
+        if current_row == rows - 1 and current_column == columns - 1: #exit
+            return move_count
 
-            while deq: # maze가 끝날때 까지
-                current_row, current_column = deq.popleft() #현재 위치
-                for i in range(4): # 상하좌우
-                    new_row = current_row + direction_rows[i]
-                    new_column = current_column + direction_columns[i]
+        for i in range(4):
+            new_row = current_row + direction_rows[i]
+            new_column = current_column + direction_columns[i]
 
-                    if (new_row < 0 or new_row >= rows # maze 바깥
-                        or new_column < 0 or new_column >= columns # maze 바깥
-                        or maze[new_row][new_column] != '1'): # 안인데 1이 아닐경우, 갈 수 없을 경우
-                        continue
-                    else: # maze 안 이면서 1인 경우, 움직일 수 있는 경우
-                        maze[new_row][new_column] = '0' # 방문 했고, 0으로 바꾼다.
-                        deq.append((new_row,new_column))
+            if 0 <= new_row < rows and 0 <= new_column < columns:
+                if (maze[new_row][new_column] == '1'
+                    and visited[new_row][new_column] == False): # 방문도 안했고, 1이면
+                    visited[new_row][new_column] = True # 방문
+                    deq.append((new_row, new_column, move_count+1))
 
-print(move_count)
+assert escape_maze(maze=[["1", "1", "1", "0", "1"],
+                         ["1", "0", "1", "0", "1"],
+                         ["1", "0", "1", "0", "1"],
+                         ["1", "1", "1", "1", "1"]]) == 8
 
+assert escape_maze(maze=[["1", "1", "1", "1", "1"],
+                         ["0", "0", "0", "0", "1"],
+                         ["1", "1", "1", "0", "1"],
+                         ["1", "0", "0", "0", "1"],
+                         ["1", "1", "1", "1", "1"]]) == 9
