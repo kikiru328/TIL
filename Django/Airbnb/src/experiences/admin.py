@@ -13,9 +13,7 @@ class ExperienceAdmin(admin.ModelAdmin):
     )
 
     list_filter = (
-        "price",
-        "start",
-        "end"
+        "category",
     )
 
 @admin.register(Perk)
