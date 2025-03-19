@@ -57,7 +57,6 @@ class Room(CommonModel):
         return self.name
 
     def total_amenities(self):
-        print(self.amenities.all())
         return self.amenities.count()
 
     def rating(self):
@@ -65,9 +64,10 @@ class Room(CommonModel):
         if count == 0:
             return "No Reviews"
         total_rating = 0
-        for review in self.reviews.all(): # lazyloading
-            total_rating += review.rating
-        return total_rating / count
+        # for review in self.reviews.all(): # lazy loading: N+1 Query
+        for review in self.reviews.all().values("rating"): # using dict
+            total_rating += review["rating"]
+        return round(total_rating / count, 2)
 
 
 class Amenity(CommonModel):

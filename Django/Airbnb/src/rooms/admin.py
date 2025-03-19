@@ -15,6 +15,13 @@ class RoomAdmin(admin.ModelAdmin):
         "created_at",
         )
 
+    search_fields = (
+        # default: contains search string
+        "^name", # ^{str}: startswith search string
+        "=price", # ={str}: equal search string
+        "owner__username" #{field}__{orm field}: searching by orm
+    )
+
     list_filter = (
         "country",
         "city",
@@ -25,8 +32,7 @@ class RoomAdmin(admin.ModelAdmin):
         "updated_at",
     )
 
-    def total_amenities(self, room):
-        return room.amenities.count()
+
 
 @admin.register(Amenity)
 class AmenityAdmin(admin.ModelAdmin):
