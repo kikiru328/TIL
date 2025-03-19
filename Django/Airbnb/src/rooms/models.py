@@ -60,6 +60,15 @@ class Room(CommonModel):
         print(self.amenities.all())
         return self.amenities.count()
 
+    def rating(self):
+        count = self.reviews.count()
+        if count == 0:
+            return "No Reviews"
+        total_rating = 0
+        for review in self.reviews.all(): # lazyloading
+            total_rating += review.rating
+        return total_rating / count
+
 
 class Amenity(CommonModel):
     name = models.CharField(
