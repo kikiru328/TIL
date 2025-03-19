@@ -7,5 +7,5 @@ from rooms import views
 
 urlpatterns = [
     path("", views.see_all_rooms), # from rooms/
-    path("<int:room_id>", views.see_one_room),
+    path("<int:room_pk>", views.see_one_room),
 ]
