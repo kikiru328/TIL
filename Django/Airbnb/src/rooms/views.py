@@ -1,6 +1,8 @@
+from wsgiref.util import request_uri
+
 from django.core.serializers import serialize
 from django.db import transaction
-from rest_framework.exceptions import NotFound, NotAuthenticated, ParseError
+from rest_framework.exceptions import NotFound, NotAuthenticated, ParseError, PermissionDenied
 from rest_framework.response import Response
 from rest_framework.status import HTTP_204_NO_CONTENT
 from rest_framework.views import APIView
@@ -64,6 +66,19 @@ class RoomDetail(APIView):
         room = self.get_object(pk=pk)
         serializer = RoomDetailSerializer(room)
         return Response(serializer.data)
+
+    def delete(self, request, pk):
+        room = self.get_object(pk=pk)
+        # login?
+        if not request.user.is_authenticated:
+            raise NotAuthenticated
+
+        # same user?
+        if  room.owner != request.user:
+            raise PermissionDenied
+        room.delete()
+        return Response(status=HTTP_204_NO_CONTENT)
+
 
 class Amenities(APIView):
 
