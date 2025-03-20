@@ -24,9 +24,6 @@ class RoomDetailSerializer(ModelSerializer):
         depth = 1 # depth: api view 내에 id로 만 있는 것들을 object로
         # depth=1: expand All, (cant customize)
 
-    def create(self, validated_data):
-        return Room.objects.create(**validated_data)
-
 class RoomListSerializer(ModelSerializer):
     class Meta:
         model = Room

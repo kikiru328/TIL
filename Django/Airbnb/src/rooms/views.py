@@ -1,9 +1,10 @@
 from django.core.serializers import serialize
-from rest_framework.exceptions import NotFound, NotAuthenticated
+from rest_framework.exceptions import NotFound, NotAuthenticated, ParseError
 from rest_framework.response import Response
 from rest_framework.status import HTTP_204_NO_CONTENT
 from rest_framework.views import APIView
 
+from categories.models import Category
 from rooms.models import Amenity, Room
 from rooms.serializers import AmenitySerializer, RoomListSerializer, RoomDetailSerializer
 
@@ -24,7 +25,22 @@ class Rooms(APIView):
         if not serializer.is_valid():
             return Response(serializer.errors)
 
-        room = serializer.save(owner=request.user) #property
+        category_pk = request.data.get("category")
+
+        if not category_pk:
+            raise ParseError("Category is required.")
+
+        try:
+            category = Category.objects.get(pk=category_pk)
+            if category.kind == Category.CategoryKindChoices.EXPERIENCES:
+                raise ParseError("Category should be rooms")
+        except Category.DoesNotExist:
+            raise ParseError("Category Not Found")
+
+        room = serializer.save(
+            owner=request.user,
+            category=category,
+        ) #property
         serializer = RoomDetailSerializer(room)
         return Response(serializer.data)
 
