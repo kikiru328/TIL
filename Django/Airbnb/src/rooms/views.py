@@ -67,6 +67,54 @@ class RoomDetail(APIView):
         serializer = RoomDetailSerializer(room)
         return Response(serializer.data)
 
+    def put(self, request, pk):
+        room = self.get_object(pk=pk)
+        # authenticate
+        if not request.user.is_authenticated:
+            raise NotAuthenticated
+        if room.owner != request.user:
+            raise PermissionDenied
+
+        serializer = RoomDetailSerializer(
+            room,
+            data=request.data,
+            partial=True,
+        )
+        if serializer.is_valid(): # True, valid
+            # update category: Foreign Key
+            category_pk = request.data.get("category")
+            if category_pk: # exists
+                try:
+                    category = Category.objects.get(pk=category_pk)
+                    if category.kind == Category.CategoryKindChoices.EXPERIENCES: # Experiences
+                        raise ParseError("Category should be 'room'")
+                except Category.DoesNotExist:
+                    raise ParseError("Category Not Found")
+
+
+            try:
+                with transaction.atomic(): # roll back when query fails
+                    # Update Category
+                    if category_pk: # category pk exists
+                        room = serializer.save(category=category) #update
+                    else:
+                        room = serializer.save() # nothing to change
+
+                    # update Amenities: ManytoMany
+                    amenities = request.data.get("amenities")
+                    if amenities: # exists
+                        room.amenities.clear() # update: delete list (reset)
+                        for amenity_pk in amenities:
+                            amenity = Amenity.objects.get(pk=amenity_pk)
+                            room.amenities.add(amenity) # update: added amenities
+                    else:
+                        room.amenities.clear() # amenities == empty list, return same empty list
+                    return Response(RoomDetailSerializer(room).data)
+            except Exception as e:
+                raise ParseError(f"Amenity Not Found\n error: {e}")
+        else:
+            return Response(serializer.errors)
+
     def delete(self, request, pk):
         room = self.get_object(pk=pk)
         # login?
