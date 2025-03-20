@@ -18,11 +18,12 @@ def categories(request):
         )
     elif request.method == "POST":
         serializer = CategorySerializer(data=request.data) # Client's request
-        print(f"User Data Validator: {serializer.is_valid()}") # check
-        print(f"Error: {serializer.errors}")
         if not serializer.is_valid():
             return Response(serializer.errors)
-        return Response({"created_at" : True})
+        new_category = serializer.save()
+        return Response(
+            CategorySerializer(new_category).data,
+        )
 
 
 
