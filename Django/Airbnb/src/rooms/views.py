@@ -1,13 +1,31 @@
+from django.core.serializers import serialize
 from rest_framework.exceptions import NotFound
 from rest_framework.response import Response
 from rest_framework.status import HTTP_204_NO_CONTENT
 from rest_framework.views import APIView
 
-from rooms.models import Amenity
-from rooms.serializers import AmenitySerializer
+from rooms.models import Amenity, Room
+from rooms.serializers import AmenitySerializer, RoomListSerializer, RoomDetailSerializer
 
 
 # Create your views here.
+class Rooms(APIView):
+    def get(self, request):
+        all_rooms = Room.objects.all()
+        serializer = RoomListSerializer(all_rooms, many=True)
+        return Response(serializer.data)
+
+class RoomDetail(APIView):
+    def get_object(self, pk):
+        try:
+            return Room.objects.get(pk=pk)
+        except Room.DoesNotExist:
+            raise NotFound
+
+    def get(self, request, pk):
+        room = self.get_object(pk=pk)
+        serializer = RoomDetailSerializer(room)
+        return Response(serializer.data)
 
 class Amenities(APIView):
 
