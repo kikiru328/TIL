@@ -20,11 +20,10 @@ def categories(request):
         serializer = CategorySerializer(data=request.data) # Client's request
         print(f"User Data Validator: {serializer.is_valid()}") # check
         print(f"Error: {serializer.errors}")
-        return Response(
-            {
-                "created_at": True,
-            }
-        )
+        if not serializer.is_valid():
+            return Response(serializer.errors)
+        return Response({"created_at" : True})
+
 
 
 @api_view()
