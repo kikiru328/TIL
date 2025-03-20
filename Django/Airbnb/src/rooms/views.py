@@ -17,32 +17,39 @@ class Rooms(APIView):
         return Response(serializer.data)
 
     def post(self, request):
-        if not request.user.is_authenticated:
-            return Response(NotAuthenticated)
-
-        serializer = RoomDetailSerializer(data=request.data)
-
-        if not serializer.is_valid():
-            return Response(serializer.errors)
-
-        category_pk = request.data.get("category")
-
-        if not category_pk:
-            raise ParseError("Category is required.")
-
-        try:
-            category = Category.objects.get(pk=category_pk)
-            if category.kind == Category.CategoryKindChoices.EXPERIENCES:
-                raise ParseError("Category should be rooms")
-        except Category.DoesNotExist:
-            raise ParseError("Category Not Found")
-
-        room = serializer.save(
-            owner=request.user,
-            category=category,
-        ) #property
-        serializer = RoomDetailSerializer(room)
-        return Response(serializer.data)
+        if request.user.is_authenticated:
+            serializer = RoomDetailSerializer(data=request.data)
+            if serializer.is_valid():
+                category_pk = request.data.get("category")
+                if not category_pk:
+                    raise ParseError
+                    raise ParseError("Category is required.")
+                try:
+                    category = Category.objects.get(pk=category_pk)
+                    if category.kind == Category.CategoryKindChoices.EXPERIENCES:
+                        raise ParseError
+                        raise ParseError("The category kind should be 'rooms'")
+                except Category.DoesNotExist:
+                    raise ParseError
+                    raise ParseError("Category not found")
+                room = serializer.save(
+                    owner=request.user,
+                    category=category,
+                )
+                amenities = request.data.get("amenities")
+                for amenity_pk in amenities:
+                    try:
+                        amenity = Amenity.objects.get(pk=amenity_pk)
+                    except Amenity.DoesNotExist:
+                        room.delete()
+                        raise ParseError(f"Amenity with id {amenity_pk} not found")
+                    room.amenities.add(amenity)
+                serializer = RoomDetailSerializer(room)
+                return Response(serializer.data)
+            else:
+                return Response(serializer.errors)
+        else:
+            raise NotAuthenticated
 
 
 
