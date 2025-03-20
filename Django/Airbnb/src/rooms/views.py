@@ -1,5 +1,5 @@
 from django.core.serializers import serialize
-from rest_framework.exceptions import NotFound
+from rest_framework.exceptions import NotFound, NotAuthenticated
 from rest_framework.response import Response
 from rest_framework.status import HTTP_204_NO_CONTENT
 from rest_framework.views import APIView
@@ -14,6 +14,22 @@ class Rooms(APIView):
         all_rooms = Room.objects.all()
         serializer = RoomListSerializer(all_rooms, many=True)
         return Response(serializer.data)
+
+    def post(self, request):
+        if not request.user.is_authenticated:
+            return Response(NotAuthenticated)
+
+        serializer = RoomDetailSerializer(data=request.data)
+
+        if not serializer.is_valid():
+            return Response(serializer.errors)
+
+        room = serializer.save(owner=request.user) #property
+        serializer = RoomDetailSerializer(room)
+        return Response(serializer.data)
+
+
+
 
 class RoomDetail(APIView):
     def get_object(self, pk):
