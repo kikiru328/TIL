@@ -1,8 +1,8 @@
 from django.urls import path
 
-from categories.views import categories, category
+from categories.views import Categories, CategoryDetail
 
 urlpatterns = [
-    path("", categories),
-    path("<int:pk>", category)
+    path("", Categories.as_view()), # rule: Check and run api codes
+    path("<int:pk>", CategoryDetail.as_view())
 ]
