@@ -19,3 +19,9 @@ class CategorySerializer(serializers.Serializer):
         return Category.objects.create(
             **validated_data # get dictionary, whole validated data (a:b -> 'a'= 'b')
         )
+
+    def update(self, instance, validated_data):
+        instance.name = validated_data.get("name", instance.name) # pack-unpack # 업다면 현재 정보
+        instance.kind = validated_data.get("kind", instance.kind)
+        instance.save()
+        return instance
