@@ -8,6 +8,7 @@ from rest_framework.status import HTTP_204_NO_CONTENT
 from rest_framework.views import APIView
 
 from categories.models import Category
+from reviews.serializers import ReviewSerializer
 from rooms.models import Amenity, Room
 from rooms.serializers import AmenitySerializer, RoomListSerializer, RoomDetailSerializer
 
@@ -180,3 +181,33 @@ class AmenityDetail(APIView):
         amenity = self.get_object(pk=pk)
         amenity.delete()
         return Response(status=HTTP_204_NO_CONTENT)
+
+class RoomReviews(APIView):
+
+    def get_object(self, pk):
+        try:
+            return Room.objects.get(pk=pk)
+        except Room.DoesNotExist:
+            raise NotFound
+
+    def get(self, request, pk):
+        # print(request.query_params) # get url parameter
+        try:
+            page = request.query_params.get("page", 1) # default page=1 -> string
+            page = int(page)
+        except ValueError:
+            page = 1 # back to default 1 * string convert error
+        page_size = 3 # [start index from]
+        start = (page - 1) * page_size
+        end = start + page_size
+        room = self.get_object(pk=pk)
+        serializer = ReviewSerializer(
+            room.reviews.all()[start:end], #  query set
+            many=True,
+        )
+        return Response(serializer.data)
+
+
+
+
+
