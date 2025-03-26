@@ -143,3 +143,7 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 # Auth
 AUTH_USER_MODEL = "users.User"
+
+# media
+MEDIA_ROOT = "uploads" #save path
+MEDIA_URL = "user-uploads/"
