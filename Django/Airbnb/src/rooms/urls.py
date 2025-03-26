@@ -1,6 +1,7 @@
 from django.urls import path
 
-from rooms.views import Rooms, Amenities, AmenityDetail, RoomDetail, RoomReviews, RoomAmenities, RoomPhotos
+from rooms.views import Rooms, Amenities, AmenityDetail, RoomDetail, RoomReviews, RoomAmenities, RoomPhotos, \
+    RoomBookings
 
 # <{parameter}:{name parameter}>
 # <int:room_id>/<str:room_name> ==> {int}/{str} ...
@@ -12,6 +13,7 @@ urlpatterns = [
     path("<int:pk>/reviews", RoomReviews.as_view()),
     path("<int:pk>/photos", RoomPhotos.as_view()),
     path("<int:pk>/amenities",RoomAmenities.as_view()),
+    path("<int:pk>/bookings", RoomBookings.as_view()),
     path("amenities/", Amenities.as_view()),
     path("amenities/<int:pk>", AmenityDetail.as_view()),
 ]
