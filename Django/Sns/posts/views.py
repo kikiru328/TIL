@@ -57,7 +57,7 @@ class PostDetail(APIView):
         try:
             return Post.objects.get(pk=pk)
         except Post.DoesNotExist:
-            raise NotFound
+            raise NotFound("There is no Post")
 
     def get(self, request, pk):
         """단일 게시물 조회"""
@@ -104,7 +104,7 @@ class Likes(APIView):
         try:
             return Post.objects.get(pk=pk)
         except Post.DoesNotExist:
-            raise NotFound
+            raise NotFound("There is no Post")
 
     def get(self, request, pk):
         post = self.get_object(pk=pk)
@@ -128,5 +128,15 @@ class Likes(APIView):
             "likes_count": updated_like_counts},
             status=HTTP_201_CREATED)
 
+    def delete(self, request, pk):
+        post = self.get_object(pk=pk)
+        like_to_delete = Like.objects.filter(
+            user=request.user,
+            post=post
+        )
+        if not like_to_delete.exists():
+            raise NotFound("There is no Likes on this post!")
+        like_to_delete.delete()
+        return Response(status=HTTP_204_NO_CONTENT)
 
 
