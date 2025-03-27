@@ -6,4 +6,5 @@ class PostAdmin(admin.ModelAdmin):
     list_display = (
         "author",
         "title",
+        "likes_count",
     )

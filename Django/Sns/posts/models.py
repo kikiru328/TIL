@@ -13,3 +13,10 @@ class Post(TimeStampedModel):
 
     def __str__(self):
         return self.title
+
+    @property
+    def likes_count(self):
+        count = self.likes.count()
+        if count == 0:
+            return "No Likes"
+        return count
