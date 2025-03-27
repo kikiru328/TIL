@@ -5,7 +5,7 @@ from rest_framework.views import APIView
 from rest_framework.exceptions import NotFound
 from posts.models import Post
 from posts.serializers import PostDetailSerializer, PostListSerializer
-
+from posts.permission import IsAuthorOrReadOnly
 
 # Create your views here.
 class Posts(APIView):
@@ -50,7 +50,7 @@ class Posts(APIView):
 
 class PostDetail(APIView):
 
-    permission_classes = [IsAuthenticatedOrReadOnly]
+    permission_classes = [IsAuthenticatedOrReadOnly, IsAuthorOrReadOnly]
 
     def get_object(self, pk):
         try:
