@@ -1,13 +1,13 @@
 from django.shortcuts import render
-from rest_framework.permissions import IsAuthenticatedOrReadOnly
+from rest_framework.permissions import IsAuthenticatedOrReadOnly, IsAuthenticated
 from rest_framework.response import Response
-from rest_framework.status import HTTP_204_NO_CONTENT
+from rest_framework.status import HTTP_204_NO_CONTENT, HTTP_201_CREATED
 from rest_framework.views import APIView
-from rest_framework.exceptions import NotFound
+from rest_framework.exceptions import NotFound, ParseError
 from posts.models import Post
 from posts.serializers import PostDetailSerializer, PostListSerializer
 from posts.permission import IsAuthorOrReadOnly
-
+from likes.models import Like
 # Create your views here.
 class Posts(APIView):
 
@@ -42,12 +42,12 @@ class Posts(APIView):
     def post(self, request):
         """게시물 작성"""
         serializer = PostDetailSerializer(data=request.data)
-        if serializer.is_valid():
-            new_post = serializer.save(author=request.user)
-            serializer = PostDetailSerializer(new_post)
-            return Response(serializer.data)
-        else:
+        if not serializer.is_valid():
             return Response(serializer.errors)
+        new_post = serializer.save(author=request.user)
+        serializer = PostDetailSerializer(new_post)
+        return Response(serializer.data)
+
 
 class PostDetail(APIView):
 
@@ -95,3 +95,38 @@ class PostDetail(APIView):
         post = self.get_object(pk=pk)
         post.delete() #set permission, post.author==request.user
         return Response(status=HTTP_204_NO_CONTENT)
+
+class Likes(APIView):
+
+    permission_classes = [IsAuthenticated]
+
+    def get_object(self, pk):
+        try:
+            return Post.objects.get(pk=pk)
+        except Post.DoesNotExist:
+            raise NotFound
+
+    def get(self, request, pk):
+        post = self.get_object(pk=pk)
+        serializer = PostDetailSerializer(post)
+        return Response(serializer.data)
+
+    def post(self, request, pk):
+        post = self.get_object(pk=pk)
+        if Like.objects.filter(
+            user=request.user,
+            post=post
+        ).exists():
+            raise ParseError("Already Likes this post!")
+        Like.objects.create(
+            user=request.user,
+            post=post,
+        )
+        updated_like_counts = post.likes.count()
+        return Response({
+            "message": "Success Likes",
+            "likes_count": updated_like_counts},
+            status=HTTP_201_CREATED)
+
+
+
