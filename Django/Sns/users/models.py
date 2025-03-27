@@ -13,8 +13,6 @@ class User(AbstractUser):
         ENG = ("eng", "Eng")
         KO = ("ko", "Ko")
 
-    username = models.CharField(max_length=50,
-                                unique=True,)
     first_name = models.CharField(max_length=150,)
     last_name = models.CharField(max_length=150,)
     avatar = models.ImageField()

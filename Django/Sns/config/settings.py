@@ -37,7 +37,8 @@ ALLOWED_HOSTS = []
 THIRD_PARTY_APPS = []
 CUSTOM_APPS = [
     'common.apps.CommonConfig',
-    'users.apps.UsersConfig'
+    'users.apps.UsersConfig',
+    'posts.apps.PostsConfig',
 ]
 SYSTEM_APPS = [
     'django.contrib.admin',
