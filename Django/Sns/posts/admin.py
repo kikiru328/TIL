@@ -4,6 +4,6 @@ from posts.models import Post
 @admin.register(Post)
 class PostAdmin(admin.ModelAdmin):
     list_display = (
-        "user",
+        "author",
         "title",
     )
