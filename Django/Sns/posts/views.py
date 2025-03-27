@@ -8,7 +8,7 @@ from rest_framework.exceptions import NotFound, ParseError
 
 from posts.models import Post
 from posts.serializers import PostDetailSerializer, PostListSerializer
-from posts.permission import IsAuthorOrReadOnly
+from posts.permission import IsAuthorOrReadOnly, IsCommentAuthorOrReadOnly
 
 from likes.models import Like
 from comments.models import Comment
@@ -151,7 +151,7 @@ class Comments(APIView):
         try:
             return Post.objects.get(pk=pk)
         except Post.DoesNotExist:
-            raise NotFound
+            raise NotFound("There is no Post")
 
     def get(self, request, pk):
         try:
@@ -178,3 +178,45 @@ class Comments(APIView):
         )
         serializer = CommentSerializer(new_comment)
         return Response(serializer.data)
+
+class CommentDetail(APIView):
+
+    permission_classes = [IsAuthenticatedOrReadOnly, IsCommentAuthorOrReadOnly]
+
+    def get_object(self, post_pk, comment_pk):
+        try:
+            comment = Comment.objects.get(pk=comment_pk)
+            if comment.post.pk != post_pk:
+                raise NotFound("This comment is not include on this post")
+            return comment
+        except Comment.DoesNotExist:
+            raise NotFound("There is No Comment")
+
+    def get(self, request, post_pk, comment_pk):
+        comment = self.get_object(post_pk=post_pk,
+                                  comment_pk=comment_pk,
+                                  )
+        serializer = CommentSerializer(instance=comment)
+        return Response(serializer.data)
+
+    def patch(self, request, post_pk, comment_pk):
+        comment = self.get_object(post_pk=post_pk,
+                                  comment_pk=comment_pk,
+                                  )
+        serializer = CommentSerializer(
+            instance=comment,
+            data=request.data,
+            partial=True
+        )
+        if not serializer.is_valid():
+            return Response(serializer.errors)
+        updated_comment = serializer.save()
+        serializer = CommentSerializer(updated_comment)
+        return Response(serializer.data)
+
+    def delete(self, request, post_pk, comment_pk):
+        comment = self.get_object(post_pk=post_pk,
+                                  comment_pk=comment_pk,
+                                  )
+        comment.delete()
+        return Response(status=HTTP_204_NO_CONTENT)
