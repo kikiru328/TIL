@@ -2,7 +2,7 @@ from django.shortcuts import render
 from rest_framework.permissions import IsAuthenticatedOrReadOnly
 from rest_framework.response import Response
 from rest_framework.views import APIView
-
+from rest_framework.exceptions import NotFound
 from posts.models import Post
 from posts.serializers import PostDetailSerializer, PostListSerializer
 
@@ -13,6 +13,7 @@ class Posts(APIView):
     permission_classes = [IsAuthenticatedOrReadOnly] # readonly: get
 
     def get(self, request):
+        """전체 게시물 목록 조회"""
         try:
             page = request.query_params.get("page", 1)
             page = int(page)
@@ -22,7 +23,9 @@ class Posts(APIView):
         start = (page - 1) * page_size
         end = start + page_size
 
-        users_all_posts = Post.objects.filter(author=request.user)
+        users_all_posts = (Post.objects
+                           .filter(author=request.user)
+                           .order_by("-created_at")) #최신 순 적용
         pagination_posts = users_all_posts[start:end]
         serializer = PostListSerializer(
             instance=pagination_posts,
@@ -36,6 +39,7 @@ class Posts(APIView):
         })
 
     def post(self, request):
+        """게시물 작성"""
         serializer = PostDetailSerializer(data=request.data)
         if serializer.is_valid():
             new_post = serializer.save(author=request.user)
@@ -43,3 +47,22 @@ class Posts(APIView):
             return Response(serializer.data)
         else:
             return Response(serializer.errors)
+
+class PostDetail(APIView):
+
+    permission_classes = [IsAuthenticatedOrReadOnly]
+
+    def get_object(self, pk):
+        try:
+            return Post.objects.get(pk=pk)
+        except Post.DoesNotExist:
+            raise NotFound
+
+    def get(self, request, pk):
+        """단일 게시물 조회"""
+        post = self.get_object(pk=pk)
+        serializer = PostDetailSerializer(
+            instance=post,
+            context={"request": request}
+        )
+        return Response(serializer.data)
