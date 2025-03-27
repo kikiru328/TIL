@@ -66,3 +66,26 @@ class PostDetail(APIView):
             context={"request": request}
         )
         return Response(serializer.data)
+
+    def put(self, request, pk):
+        post = self.get_object(pk=pk)
+        serializer = PostDetailSerializer(
+            instance=post,
+            data=request.data
+        )
+        if not serializer.is_valid():
+            return Response(serializer.errors)
+        updated_whole_post = serializer.save()
+        return Response(serializer.data)
+
+    def patch(self, request, pk):
+        post = self.get_object(pk=pk)
+        serializer = PostDetailSerializer(
+            instance=post,
+            data=request.data,
+            partial=True
+        )
+        if not serializer.is_valid():
+            return Response(serializer.errors)
+        updated_whole_post = serializer.save()
+        return Response(serializer.data)
