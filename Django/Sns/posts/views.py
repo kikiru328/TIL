@@ -154,7 +154,18 @@ class Comments(APIView):
             raise NotFound
 
     def get(self, request, pk):
-        return Response({"get": True})
+        try:
+            page = request.query_params.get("page", 1)
+            page = int(page)
+        except ValueError:
+            page = 1
+        page_size = 5
+        start = (page - 1) * page_size
+        end = start + page_size
+        post = self.get_object(pk=pk)
+        comments = post.comments.all().order_by("-created_at")[start:end]
+        serializer = CommentSerializer(comments, many=True)
+        return Response(serializer.data)
 
     def post(self, request, pk):
         post = self.get_object(pk=pk)
