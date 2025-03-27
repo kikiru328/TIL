@@ -1,13 +1,18 @@
+from django.core.serializers import serialize
 from django.shortcuts import render
 from rest_framework.permissions import IsAuthenticatedOrReadOnly, IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.status import HTTP_204_NO_CONTENT, HTTP_201_CREATED
 from rest_framework.views import APIView
 from rest_framework.exceptions import NotFound, ParseError
+
 from posts.models import Post
 from posts.serializers import PostDetailSerializer, PostListSerializer
 from posts.permission import IsAuthorOrReadOnly
+
 from likes.models import Like
+from comments.models import Comment
+from comments.serializers import CommentSerializer
 # Create your views here.
 class Posts(APIView):
 
@@ -47,7 +52,6 @@ class Posts(APIView):
         new_post = serializer.save(author=request.user)
         serializer = PostDetailSerializer(new_post)
         return Response(serializer.data)
-
 
 class PostDetail(APIView):
 
@@ -139,4 +143,27 @@ class Likes(APIView):
         like_to_delete.delete()
         return Response(status=HTTP_204_NO_CONTENT)
 
+class Comments(APIView):
 
+    permission_classes = [IsAuthenticatedOrReadOnly]
+
+    def get_object(self, pk):
+        try:
+            return Post.objects.get(pk=pk)
+        except Post.DoesNotExist:
+            raise NotFound
+
+    def get(self, request, pk):
+        return Response({"get": True})
+
+    def post(self, request, pk):
+        post = self.get_object(pk=pk)
+        serializer = CommentSerializer(data=request.data)
+        if not serializer.is_valid():
+            return Response(serializer.errors)
+        new_comment = serializer.save(
+            user=request.user,
+            post=post,
+        )
+        serializer = CommentSerializer(new_comment)
+        return Response(serializer.data)
