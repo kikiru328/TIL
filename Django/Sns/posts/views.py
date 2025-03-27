@@ -1,6 +1,7 @@
 from django.shortcuts import render
 from rest_framework.permissions import IsAuthenticatedOrReadOnly
 from rest_framework.response import Response
+from rest_framework.status import HTTP_204_NO_CONTENT
 from rest_framework.views import APIView
 from rest_framework.exceptions import NotFound
 from posts.models import Post
@@ -89,3 +90,8 @@ class PostDetail(APIView):
             return Response(serializer.errors)
         updated_whole_post = serializer.save()
         return Response(serializer.data)
+
+    def delete(self, request, pk):
+        post = self.get_object(pk=pk)
+        post.delete() #set permission, post.author==request.user
+        return Response(status=HTTP_204_NO_CONTENT)
