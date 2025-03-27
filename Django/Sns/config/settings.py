@@ -41,6 +41,7 @@ CUSTOM_APPS = [
     'users.apps.UsersConfig',
     'posts.apps.PostsConfig',
     'likes.apps.LikesConfig',
+    'comments.apps.CommentsConfig',
 ]
 SYSTEM_APPS = [
     'django.contrib.admin',
