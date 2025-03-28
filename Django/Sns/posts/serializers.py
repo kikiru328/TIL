@@ -3,7 +3,7 @@ from rest_framework.serializers import ModelSerializer, SerializerMethodField
 
 from posts.models import Post
 
-from users.serializers import DefaultUserSerializer
+from users.serializers import UserDefaultSerializer
 
 
 class PostListSerializer(ModelSerializer):
@@ -23,7 +23,7 @@ class PostListSerializer(ModelSerializer):
 
 
 class PostDetailSerializer(ModelSerializer):
-    author = DefaultUserSerializer(read_only=True)
+    author = UserDefaultSerializer(read_only=True)
     likes_count = SerializerMethodField()
     class Meta:
         model = Post
