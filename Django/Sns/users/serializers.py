@@ -38,3 +38,11 @@ class UserDetailSerializer(ModelSerializer):
 
     def get_followers_count(self, user):
         return user.followers.count()
+
+class UserFollowSerializer(ModelSerializer):
+    class Meta:
+        model = User
+        fields = (
+            "avatar",
+            "username",
+        )
