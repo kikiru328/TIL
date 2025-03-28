@@ -14,7 +14,7 @@ from likes.models import Like
 from comments.models import Comment
 from comments.serializers import CommentSerializer
 # Create your views here.
-class Posts(APIView):
+class PostList(APIView):
 
     permission_classes = [IsAuthenticatedOrReadOnly] # readonly: get
 
@@ -143,7 +143,7 @@ class Likes(APIView):
         like_to_delete.delete()
         return Response(status=HTTP_204_NO_CONTENT)
 
-class Comments(APIView):
+class CommentList(APIView):
 
     permission_classes = [IsAuthenticatedOrReadOnly]
 
