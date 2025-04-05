@@ -5,8 +5,10 @@ from rest_framework.response import Response
 from rest_framework.status import HTTP_400_BAD_REQUEST, HTTP_204_NO_CONTENT
 from rest_framework.views import APIView
 from rest_framework.exceptions import NotFound, ParseError, ValidationError
+from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
+
 from users.models import User
-from users.serializers import UserDefaultSerializer, UserDetailSerializer, UserFollowSerializer, LogInSerializer
+from users.serializers import UserDefaultSerializer, UserDetailSerializer, UserFollowSerializer, UserSignUpSerializer
 from follows.models import Follow
 # Create your views here.
 class UserList(APIView):
@@ -181,3 +183,20 @@ class MyFollowings(APIView):
             context={"request":request}
         )
         return Response(serializer.data)
+
+class SignUp(APIView):
+    def post(self, request):
+        serializer = UserSignUpSerializer(data=request.data)
+        if not serializer.is_valid():
+            return Response(serializer.errors)
+        new_user = serializer.save()
+
+        token = TokenObtainPairSerializer.get_token(new_user)
+        access = str(token.access_token)
+        refresh = str(token)
+        serializer = UserSignUpSerializer(new_user)
+        return Response({
+            "user": serializer.data,
+            "access": access,
+            "refresh": refresh
+        })

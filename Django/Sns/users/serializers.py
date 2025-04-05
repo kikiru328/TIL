@@ -1,5 +1,5 @@
 from rest_framework.serializers import ModelSerializer, SerializerMethodField
-
+from rest_framework import serializers
 from users.models import User
 class UserDefaultSerializer(ModelSerializer):
 
@@ -47,9 +47,30 @@ class UserFollowSerializer(ModelSerializer):
             "username",
         )
 
-class LogInSerializer(ModelSerializer):
+class UserSignUpSerializer(ModelSerializer):
+    username = serializers.CharField()
+    password = serializers.CharField(write_only=True)
+
     class Meta:
         model = User
         fields = (
             "username",
+            "password",
+            "email"
         )
+    def validate_username(self, value):
+        if User.objects.filter(username=value).exists():
+            raise serializers.ValidationError("Already exists username")
+        return value
+
+    def validate_password(self, value):
+        if len(value) < 8:
+            raise serializers.ValidationError("Password must at least 8 digits")
+        return value
+
+    def create(self, validated_data):
+        password = validated_data.pop("password")
+        user = User(**validated_data)
+        user.set_password(password)
+        user.save()
+        return user

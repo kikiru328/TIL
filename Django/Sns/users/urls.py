@@ -1,5 +1,6 @@
 from django.urls import path
-from users.views import UserList, UserDetail, Follows, Followers, Followings, MyFollowers, MyFollowings, MyUserInfo
+from users.views import UserList, UserDetail, Follows, Followers, Followings, MyFollowers, MyFollowings, MyUserInfo, \
+    SignUp
 
 urlpatterns = [
     path("", UserList.as_view()),
@@ -10,4 +11,5 @@ urlpatterns = [
     path("<int:pk>/follows/followings", Followings.as_view()),
     path("me/follows/followers", MyFollowers.as_view()),
     path("me/follows/followings", MyFollowings.as_view()),
+    path("sign-up", SignUp.as_view()),
 ]
