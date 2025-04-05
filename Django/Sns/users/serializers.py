@@ -46,3 +46,10 @@ class UserFollowSerializer(ModelSerializer):
             "avatar",
             "username",
         )
+
+class LogInSerializer(ModelSerializer):
+    class Meta:
+        model = User
+        fields = (
+            "username",
+        )

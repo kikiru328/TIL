@@ -9,5 +9,5 @@ urlpatterns = [
     path("<int:pk>/follows/followers", Followers.as_view()),
     path("<int:pk>/follows/followings", Followings.as_view()),
     path("me/follows/followers", MyFollowers.as_view()),
-    path("me/follows/followings", MyFollowings.as_view())
+    path("me/follows/followings", MyFollowings.as_view()),
 ]
