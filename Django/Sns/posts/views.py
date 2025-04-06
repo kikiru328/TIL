@@ -1,3 +1,7 @@
+import uuid
+
+import boto3
+from django.conf import settings
 from django.core.serializers import serialize
 from django.shortcuts import render
 from rest_framework.permissions import IsAuthenticatedOrReadOnly, IsAuthenticated
@@ -220,3 +224,39 @@ class CommentDetail(APIView):
                                   )
         comment.delete()
         return Response(status=HTTP_204_NO_CONTENT)
+
+class PresignedURL(APIView):
+    def get(self, request):
+        filename = request.query_params.get("filename")
+        content_type = request.query_params.get("type")
+
+        if not filename or not content_type:
+            raise ParseError("Required filename & content type")
+
+        extension = filename.split('.')[-1]
+        key = f"posts/{uuid.uuid4()}.{extension}"
+
+
+        s3_client = boto3.client(
+            "s3",
+            aws_access_key_id=settings.AWS_ACCESS_KEY_ID,
+            aws_secret_access_key=settings.AWS_SECRET_ACCESS_KEY,
+            region_name=settings.AWS_S3_REGION_NAME,
+        )
+
+        upload_url = s3_client.generate_presigned_url(
+            ClientMethod="put_object",
+            Params={
+                "Bucket": settings.AWS_STORAGE_BUCKET_NAME,
+                "Key": key,
+                "ContentType": content_type
+            },
+            ExpiresIn=300
+        )
+
+        s3_url = f"https://{settings.AWS_STORAGE_BUCKET_NAME}.s3.amazonaws.com/{key}"
+
+        return Response({
+            "upload_url": upload_url,
+            "s3_url": s3_url
+        })
