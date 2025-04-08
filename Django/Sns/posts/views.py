@@ -260,3 +260,8 @@ class PresignedURL(APIView):
             "upload_url": upload_url,
             "s3_url": s3_url
         })
+
+from django.shortcuts import render
+
+def post_preview(request):
+    return render(request, "post_preview.html")

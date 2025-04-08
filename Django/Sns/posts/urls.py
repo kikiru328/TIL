@@ -1,5 +1,5 @@
 from django.urls import path
-from posts.views import PostList, PostDetail, Likes, CommentList, CommentDetail, PresignedURL
+from posts.views import PostList, PostDetail, Likes, CommentList, CommentDetail, PresignedURL, post_preview
 
 urlpatterns = [
     path("", PostList.as_view()),
@@ -7,5 +7,6 @@ urlpatterns = [
     path("<int:pk>/likes/", Likes.as_view()),
     path("<int:pk>/comments/", CommentList.as_view()),
     path("<int:post_pk>/comments/<int:comment_pk>", CommentDetail.as_view()),
-    path("presigned-url/", PresignedURL.as_view())
+    path("presigned-url/", PresignedURL.as_view()),
+    path("preview/", post_preview)
 ]
