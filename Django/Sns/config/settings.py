@@ -49,6 +49,7 @@ CUSTOM_APPS = [
     'likes.apps.LikesConfig',
     'comments.apps.CommentsConfig',
     'follows.apps.FollowsConfig',
+    'newsfeeds.apps.NewsfeedsConfig',
 ]
 SYSTEM_APPS = [
     'django.contrib.admin',
