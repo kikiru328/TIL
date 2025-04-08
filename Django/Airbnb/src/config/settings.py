@@ -9,21 +9,25 @@ https://docs.djangoproject.com/en/5.1/topics/settings/
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/5.1/ref/settings/
 """
+import os
+import environ
+
 
 from pathlib import Path
 
 from django.conf.global_settings import AUTH_USER_MODEL
 
+env = environ.Env()
+
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
-
+environ.Env.read_env(os.path.join(BASE_DIR, ".env"))
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/5.1/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-hp%ah%f#8np#b7!9k8q3-0n!zi8_b=784sz3ap+zq*f(^!g94a'
-
+SECRET_KEY = env("SECRET_KEY")
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
@@ -32,6 +36,7 @@ ALLOWED_HOSTS = []
 # Third party apps
 THIRD_PARTY_APPS = [
     "rest_framework",
+    "rest_framework.authtoken"
 ]
 
 # Application definition
@@ -147,3 +152,12 @@ AUTH_USER_MODEL = "users.User"
 # media
 MEDIA_ROOT = "uploads" #save path
 MEDIA_URL = "user-uploads/"
+
+REST_FRAMEWORK = {
+    "DEFAULT_AUTHENTICATION_CLASSES":[
+        "rest_framework.authentication.SessionAuthentication",
+        "config.authentications.TrustMeBroAuthentication",
+        "rest_framework.authentication.TokenAuthentication",
+        "config.authentications.JWTAuthentication",
+    ]
+}
