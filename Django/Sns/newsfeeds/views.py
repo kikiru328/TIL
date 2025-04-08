@@ -43,7 +43,7 @@ class NewsFeeds(APIView):
         redis_client.delete(key)
         if post_ids:
             redis_client.rpush(key, *post_ids)
-            redis_client.ltrim(key, 0, 49)
+            redis_client.ltrim(key, 0,99)
         return Response(status=HTTP_200_OK)
 
 

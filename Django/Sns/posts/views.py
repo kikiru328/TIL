@@ -10,6 +10,7 @@ from rest_framework.status import HTTP_204_NO_CONTENT, HTTP_201_CREATED
 from rest_framework.views import APIView
 from rest_framework.exceptions import NotFound, ParseError
 
+from follows.models import Follow
 from posts.models import Post
 from posts.serializers import PostDetailSerializer, PostListSerializer
 from posts.permission import IsAuthorOrReadOnly, IsCommentAuthorOrReadOnly
@@ -17,6 +18,9 @@ from posts.permission import IsAuthorOrReadOnly, IsCommentAuthorOrReadOnly
 from likes.models import Like
 from comments.models import Comment
 from comments.serializers import CommentSerializer
+from utils.redis import redis_client
+
+
 # Create your views here.
 class PostList(APIView):
 
@@ -50,10 +54,20 @@ class PostList(APIView):
 
     def post(self, request):
         """게시물 작성"""
+        def distribute_to_followers(post):
+            followers = Follow.objects.filter(following=post.author).values_list("follower_id", flat=True)
+            for follower_id in followers:
+                key = f"newsfeed:user:{follower_id}"
+                redis_client.lpush(key, str(post.id))
+                redis_client.ltrim(key, 0, 99)
+
         serializer = PostDetailSerializer(data=request.data)
         if not serializer.is_valid():
             return Response(serializer.errors)
         new_post = serializer.save(author=request.user)
+
+        distribute_to_followers(new_post)
+
         serializer = PostDetailSerializer(new_post)
         return Response(serializer.data)
 
