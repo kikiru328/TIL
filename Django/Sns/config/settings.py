@@ -50,6 +50,7 @@ CUSTOM_APPS = [
     'comments.apps.CommentsConfig',
     'follows.apps.FollowsConfig',
     'newsfeeds.apps.NewsfeedsConfig',
+    'search.apps.SearchConfig',
 ]
 SYSTEM_APPS = [
     'django.contrib.admin',
@@ -169,3 +170,15 @@ SIMPLE_JWT = {
     "SIGNING_KEY": SECRET_KEY,
     "AUTH_HEADER_TYPES": ("Bearer",),
 }
+
+# cache: newsfeed
+REDIS_HOST = env("REDIS_HOST", default="localhost")
+REDIS_PORT = env("REDIS_PORT", default=6379)
+
+# elastic search
+ELASTIC_SEARCH_HOST = env("ELASTIC_SEARCH_HOST", default="localhost")
+
+# celery
+CELERY_BROKER_URL = f"redis://{REDIS_HOST}:{REDIS_PORT}/0"
+CELERY_ACCEPT_CONTENT = ['json']
+CELERY_TASK_SERIALIZER = 'json'
