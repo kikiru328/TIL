@@ -7,3 +7,4 @@ pyvenv.cfg
 **/lib64
 .DS_Store
 **/__pycache__/
+**/.idea/
