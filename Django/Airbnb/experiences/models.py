@@ -37,7 +37,7 @@ class Experience(CommonModel):
         blank=True,
         on_delete=models.SET_NULL,
     )
-    
+
     def __str__(self) -> str:
         return self.name
 
