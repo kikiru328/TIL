@@ -37,4 +37,3 @@ class ReviewAdmin(admin.ModelAdmin):
         "room__category",
         "room__pet_friendly",
     )
-    
