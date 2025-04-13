@@ -1,23 +1,10 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <h3>{{title}}</h3>
-
-    <ul>
-        {% for room in rooms %}
-        <li>
-            <a href="/rooms/{{room.pk}}">
-                {{room.name}}<br />
-                {% for amenity in room.amenities.all %}
-                <span>-{{amenity.name}}<br /></span>
-                {% endfor%}</a
-            >
-        </li>
-        {% endfor %}
-    </ul>
-</head>
-<body>
-
-</body>
-</html>
+<h1>{{room.name}}</h1>
+<h3>{{room.country}}/{{room.city}}</h3>
+<h4>{{room.price}}</h4>
+<p>{{room.description}}</p>
+<h5>{{room.category.name}}</h5>
+{% else %}
+<h1>404 not found</h1>
+{% endif %}
