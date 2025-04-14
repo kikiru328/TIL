@@ -227,4 +227,3 @@ class RoomBookings(APIView):
             return Response({"ok": True})
         else:
             return Response(serializer.errors)
-        
