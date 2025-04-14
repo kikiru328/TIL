@@ -8,4 +8,5 @@ urlpatterns = [
     path("<int:pk>/photos", views.RoomPhotos.as_view()),
     path("amenities/", views.Amenities.as_view()),
     path("amenities/<int:pk>", views.AmenityDetail.as_view()),
+    path("<int:pk>/bookings", views.RoomBookings.as_view()),
 ]
