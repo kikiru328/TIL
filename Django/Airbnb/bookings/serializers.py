@@ -1,7 +1,7 @@
 from django.utils import timezone
 from rest_framework import serializers
 from .models import Booking
-
+from datetime import time
 
 class CreateRoomBookingSerializer(serializers.ModelSerializer):
 
@@ -42,13 +42,55 @@ class CreateRoomBookingSerializer(serializers.ModelSerializer):
             )
         return data
 
-class PublicBookingSerializer(serializers.ModelSerializer):
+class CreateExperienceBookingSerializer(serializers.ModelSerializer):
+    experience_time = serializers.TimeField()
+
+    class Meta:
+        model = Booking
+        fields = ("experience_time", "guests")
+
+    def validate_experience_time(self, value):
+        now_time = timezone.localtime().time()
+        if value < now_time:
+            raise serializers.ValidationError("Can't book past time")
+        return value
+
+    def validate(self, value):
+
+        experience_time = value.get("experience_time")
+        experience = self.context["experience"]
+
+        if experience_time is None:
+            return value
+
+        if experience:
+            if not (experience.start <= experience_time < experience.end):
+                raise serializers.ValidationError(
+                    f"Can reservation from {experience.start.strftime('%H:%M')} to {experience.end.strftime('%H:%M')}."
+                )
+        else:
+            raise serializers.ValidationError("There is no experience")
+
+        if Booking.objects.filter(experience_time=experience_time).exists():
+            raise serializers.ValidationError("This date & time already taken")
+
+        return value
+
+class PublicRoomBookingSerializer(serializers.ModelSerializer):
     class Meta:
         model = Booking
         fields = (
             "pk",
             "check_in",
             "check_out",
+            "guests",
+        )
+
+class PublicExperienceBookingSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Booking
+        fields = (
+            "pk",
             "experience_time",
             "guests",
         )

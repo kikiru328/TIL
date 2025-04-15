@@ -16,7 +16,7 @@ from . import serializers
 from reviews.serializers import ReviewSerializer
 from medias.serializers import PhotoSerializer
 from bookings.models import Booking
-from bookings.serializers import PublicBookingSerializer, CreateRoomBookingSerializer
+from bookings.serializers import PublicRoomBookingSerializer, CreateRoomBookingSerializer
 
 class Amenities(APIView):
     def get(self, request):
@@ -132,7 +132,48 @@ class RoomDetail(APIView):
         room = self.get_object(pk)
         if room.owner != request.user:
             raise PermissionDenied
-        # your magic
+        serializer = serializers.RoomDetailSerializer(
+            room,
+            data=request.data,
+            partial=True,
+        )
+        if serializer.is_valid(): # True, valid
+            # update category: Foreign Key
+            category_pk = request.data.get("category")
+            if category_pk: # exists
+                try:
+                    category = Category.objects.get(pk=category_pk)
+                    if category.kind == Category.CategoryKindChoices.EXPERIENCES: # Experiences
+                        raise ParseError("Category should be 'room'")
+                except Category.DoesNotExist:
+                    raise ParseError("Category Not Found")
+
+
+            try:
+                with transaction.atomic(): # roll back when query fails
+                    # Update Category
+                    if category_pk: # category pk exists
+                        room = serializer.save(category=category) #update
+                    else:
+                        room = serializer.save() # nothing to change
+
+                    # update Amenities: ManytoMany
+                    amenities = request.data.get("amenities")
+                    if amenities: # exists
+                        room.amenities.clear() # update: delete list (reset)
+                        for amenity_pk in amenities:
+                            amenity = Amenity.objects.get(pk=amenity_pk)
+                            room.amenities.add(amenity) # update: added amenities
+                    else:
+                        room.amenities.clear() # amenities == empty list, return same empty list
+                    return Response(serializers.RoomDetailSerializer(
+                        room,
+                        context={"request": request},
+                        ).data)
+            except Exception as e:
+                raise ParseError(f"Amenity Not Found\n error: {e}")
+        else:
+            return Response(serializer.errors)
 
     def delete(self, request, pk):
         room = self.get_object(pk)
@@ -217,7 +258,7 @@ class RoomBookings(APIView):
             kind=Booking.BookingKindChoices.ROOM,
             check_in__gt=now,
         )
-        serializer = PublicBookingSerializer(bookings, many=True)
+        serializer = PublicRoomBookingSerializer(bookings, many=True)
         return Response(serializer.data)
 
     def post(self, request, pk):
@@ -229,7 +270,7 @@ class RoomBookings(APIView):
                 user=request.user,
                 kind=Booking.BookingKindChoices.ROOM,
             )
-            serializer = PublicBookingSerializer(booking)
+            serializer = PublicRoomBookingSerializer(booking)
             return Response(serializer.data)
         else:
             return Response(serializer.errors)
