@@ -1,10 +1,27 @@
-# Why FastAPI?
-나는 이전에도 `Flask`로 간단한 웹 서비스 (자동 Script 동작 서비스라고 낮춰 
-말해도 할 말이 없을 정도..)를 만들어 보았고, `Django`를 강의로 배우기도 해보았다.
+# ⚡ FastAPI 학습 기록
 
-하지만 `Flask`의 가벼움과 `Django`의 무거움은 격을 달리했다. 나는 조금더 원활하게 내가 하고 싶은 것들을 만들 수 있는 Framework가 없을까 생각했던 찰나, `FastAPI` Framework가 있음을 확인했다. API와 Docs를 자동으로 생성하기 때문에 쉽게 웹 서비스를 구축할 수 있다는 것이 큰 메리트였다.  
+## 📌 Why FastAPI?
 
-물론 앞으로 개발할때는 `Django`를 더욱 많이 활용하겠지만 `FastAPI`를 활용하면서 백엔드를 공부해 나갈 예정이다.  
+나는 이전에도 Flask로 간단한 웹 서비스를 만들어 본 경험이 있고, Django 강의도 수강해봤다.  
+하지만 Flask의 가벼움과 Django의 무거움은 분명한 차이가 있었고,  
+조금 더 **내가 원하는 기능을 유연하게 구현할 수 있는 프레임워크**를 찾던 중 `FastAPI`를 알게 되었다.
 
-# Projects
-- [X] **Complete** : [ToDo-Mini-Project](https://github.com/kikiru328/TIL/tree/main/FastAPI/ToDo_mini_Project) / Inflearn, 2025.02
+FastAPI는 자동으로 문서화된 API(Docs)를 제공하고,  
+빠르게 API 기반 웹 서비스를 구성할 수 있다는 점에서 **입문자에게도 매우 큰 장점**이 있다.  
+앞으로 본격적인 백엔드 개발은 Django를 주로 하겠지만,  
+FastAPI는 **가볍게 빠르게 프로토타이핑하거나 실습하기에 딱 좋은 도구**라고 느낀다.
+
+> ✔️ 개인적인 연습과 학습을 위해, 이 폴더에는 FastAPI를 기반으로 한 다양한 실습 프로젝트를 정리하고 있다.
+
+---
+
+## 🛠️ Projects
+
+| 상태       | 프로젝트 명            | 강의/참고 | 완료 시점 |
+|------------|------------------------|------------|-----------|
+| ✅ 완료    | ToDo-Mini-Project      | Inflearn   | 2025.02   |
+| 🔄 이전완료 | SNS Practice Project   | —          | 2025.03         |
+
+> ⚠️ 해당 프로젝트들은 Git Convention을 정하기 전 작성된 코드들이 포함되어 있습니다.
+
+---
