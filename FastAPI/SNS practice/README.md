@@ -1,24 +1,30 @@
-# SNS Project
-Django를 활용해서 Project를 하기 전, 기존에 배웠던 `FastAPI`를 활용하기 위해서  
-SNS Project를 개발해보았다.  
+# FASTAPI : SNS Practice Project
 
-# Function Requirment
-## Post (Thread)
-- [X] Post Thread
-- [X] Get Threads
-- [X] Get Threads by user_id
-- [X] Patch Thread
-- [X] Delete Thread
+**Purpose** : Django 기반으로 프로젝트를 시작하기 전에, 기존에 학습했던 FastAPI를 활용하여 SNS 서비스를 직접 구성해보았다.
 
-## Like
-- [X] Post Like
-- [X] Remove Like
-- [X] Get Count Likes
+### 기능 요약
 
-## Comment
-- [X] Post Comments
-- [X] Patch Comments
-- [X] Get Comments by post_id
+**Post (Thread)**  
+- [X] 게시글 작성  
+- [X] 전체 게시글 조회  
+- [X] 사용자별 게시글 조회  
+- [X] 게시글 수정  
+- [X] 게시글 삭제  
 
-## Newsfeed
-- [X] Get all Threads
+**Like**  
+- [X] 좋아요 등록  
+- [X] 좋아요 취소  
+- [X] 좋아요 수 조회  
+
+**Comment**  
+- [X] 댓글 작성  
+- [X] 댓글 수정  
+- [X] 게시글별 댓글 조회  
+
+**Newsfeed**  
+- [X] 전체 뉴스피드 조회  
+
+---
+
+이 프로젝트는 FastAPI 기반으로 구현되었으며,  
+이후 Django 환경으로 마이그레이션하여 `django/Sns`로 이전되었다.
