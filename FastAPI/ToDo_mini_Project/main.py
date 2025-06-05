@@ -43,4 +43,4 @@ class CreateToDoRequest(BaseModel):
 @app.post("/todos")
 def create_todo_handler(request: CreateToDoRequest):
     todo_data[request.id] = request.dict()
-    return 
+    return todo_data[request.id]

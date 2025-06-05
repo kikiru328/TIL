@@ -40,3 +40,22 @@ def get_by_sort(order: str):
         return data[::-1]
     return data
 ```
+
+### POST
+생성하는 Method는 `POST`이다.  
+생성하기 위해서는 `request body`가 필요한데, FastAPI는 `pydantic`을 이용해서 인자를 받아 생성한다.
+
+```python
+from pydantic import BaseModel
+
+class what_we_need_to_create(BaseModel):
+    id: int
+    contents: str
+    is_done: bool  
+
+@app.post("~")
+def create_handler(request: CreateToDoRequest):
+    create_data[request.id] = request.dict()
+    return create_data[request.id]
+
+```
