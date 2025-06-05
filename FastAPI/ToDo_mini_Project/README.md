@@ -15,6 +15,28 @@ uvicorn main:app --reload #hot reloading
 ```
 2. `localhost:port/docs`로 `swagger`문서 확인 가능  
 
+## API
+### GET
+FastAPI의 API 중 조회는 `GET` Method를 사용한다.
 
+1. 기본적인 `GET`의 형태는 다음과 같다.
 
+```python
+@app.get("~")
+def get_handler_something():
+    return things_we_need_to_get
 
+@app.get("~/{id}")
+def get_specific_something(id: int):
+    return A_thing_we_need_to_get
+```
+2. sort나 query는 router에 입력이 아니라 함수 parameter로 입력된다
+
+```python
+@app.get("~")
+def get_by_sort(order: str):
+    data = list(data_from_db)
+    if order == "DESC":
+        return data[::-1]
+    return data
+```
