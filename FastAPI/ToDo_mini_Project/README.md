@@ -88,3 +88,16 @@ def delete_this(id: int):
     data.pop(id, None)
     return data
 ```
+## 상태코드
+
+모든 web framework는 동일한 상태코드를 갖는다.  
+- 200: OK, 요청 성공
+- 201: Created, 요청 성공, POST
+- 204: No Content: 요청 성공, 응답할 자원 없음
+- 400: Bad Request: 요청 실패
+- 401: Unauthorized: 인증실패
+- 403: Forbidden: 권한 문제 및 잘못된 Method
+- 404: Not Found: 자원이 없는 경우 & 잘못된 end point
+- 500: Internal Server Error: 범용적 서버 에러
+- 502: Bad Gateway: Reverse Proxy에서 서버의 응답을 처리할 수 없음
+- 503: Service Unavailable: 서버가 요청을 처리할 수 없는 경우 (서버 다운)
