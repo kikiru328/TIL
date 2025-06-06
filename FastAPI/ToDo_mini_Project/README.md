@@ -101,3 +101,9 @@ def delete_this(id: int):
 - 500: Internal Server Error: 범용적 서버 에러
 - 502: Bad Gateway: Reverse Proxy에서 서버의 응답을 처리할 수 없음
 - 503: Service Unavailable: 서버가 요청을 처리할 수 없는 경우 (서버 다운)
+
+### 상태 코드를 지정하는 법
+```python
+@app.get("~", status_code=200)
+def ~
+```

@@ -24,7 +24,7 @@ todo_data = {
     }
 }
 
-@app.get("/todos")
+@app.get("/todos", status_code=200)
 def get_todos_handler(order: str):
     ret = list(todo_data.values())
     if order == "DESC":
