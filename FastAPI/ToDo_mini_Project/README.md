@@ -43,7 +43,8 @@ def get_by_sort(order: str):
 
 ### POST
 생성하는 Method는 `POST`이다.  
-생성하기 위해서는 `request body`가 필요한데, FastAPI는 `pydantic`을 이용해서 인자를 받아 생성한다.
+생성하기 위해서는 `request body`가 필요한데,  
+FastAPI는 `pydantic`을 이용해서 인자를 받아 생성한다.
 
 ```python
 from pydantic import BaseModel
@@ -57,5 +58,33 @@ class what_we_need_to_create(BaseModel):
 def create_handler(request: CreateToDoRequest):
     create_data[request.id] = request.dict()
     return create_data[request.id]
+```
 
+### PATCH
+`PATCH`는 부분을 변경하는 method이다.  
+일정 부분을 바꾸기 위해서 전체의 데이터를 불러오는 것이 아니라  
+아래의 방법을 활용한다.
+
+```python
+from fastapi import Body
+
+@app.patch("~/{id}")
+def update_something(
+    id: int,
+    what: bool = Body(..., embed=True),
+):
+    something = data.get(id) # GET
+    if something:
+        something["what_value"] = what
+        return something
+    return {}
+```
+
+### DELETE
+`DELETE`는 아예 삭제하는 method다.  
+```python
+@app.delete("~/{id}") 
+def delete_this(id: int):
+    data.pop(id, None)
+    return data
 ```
