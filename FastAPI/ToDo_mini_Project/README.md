@@ -106,4 +106,11 @@ def delete_this(id: int):
 ```python
 @app.get("~", status_code=200)
 def ~
+
+# FastAPI 활용할수도 있다
+from fastapi import HTTPException
+
+@ ~
+def ~
+    raise HTTPException(status_code=404, detail="not found")
 ```
