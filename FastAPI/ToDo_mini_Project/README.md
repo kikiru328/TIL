@@ -88,6 +88,7 @@ def delete_this(id: int):
     data.pop(id, None)
     return data
 ```
+
 ## 상태코드
 
 모든 web framework는 동일한 상태코드를 갖는다.  
@@ -114,3 +115,45 @@ from fastapi import HTTPException
 def ~
     raise HTTPException(status_code=404, detail="not found")
 ```
+
+## Database
+모든 프로젝트의 database는 코드 내부에 저장하는게 아니라  
+DB에 저장하게 될 것이다. 따라서 docker-mysql을 설정해 사용해보자.  
+
+```bash
+# docker mysql 설정
+docker run -p 3306:3306 -e MYSQL_ROOT_PASSWORD=??? -e MYSQL_DATABASE=??? -d -v ???:/db --name ??? mysql:8.0
+
+# MySQL 접속
+docker exec -it ??? bash
+mysql -u root -p 
+
+# SQL
+SHOW databases;
+USE ~;
+CREATE TABLE ~(
+    ;
+)
+```
+
+반면, 실제로 sqlalchemy를 사용할 경우 ORM에 의해서 테이블 생성, 데이터 조작이 가능하기에 이번 실습단위에서는 DB를 구축해두고 사용해보는 것으로 알아보자.  
+
+기본적으로 sqlalchemy와 연동하기 위해서는 아래와 같은 connection이 필요하다
+
+```python
+from sqlalchemy import create_engine
+from sqlalchemy.orm import sessionmaker
+
+DATABASE_URL = "mysql+pymysql://root:todos@127.0.0.1:3306/todos"
+
+engine = create_engine(DATABASE_URL, echo=True) #echo=True: print sqlalchemy query
+SessionFactory = sessionmaker(
+    autocommit=False,
+    autoflush=False,
+    bind=engine
+)
+```
+
+
+
+
