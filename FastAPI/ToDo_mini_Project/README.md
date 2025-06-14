@@ -154,6 +154,24 @@ SessionFactory = sessionmaker(
 )
 ```
 
+## ORM
+FastAPI와 MySql을 연동은 SQLAlchemy의 ORM으로 연동할 수 있다.  
+ORM을 사용하는 이유는 직접 DB를 건드리지 않고 조회/생성/수정/삭제의 기능을  
+FastAPI에서 사용할 수 있기 때문이다.  
+(실제로 DB에 table이 구축되어 있지 않더라도 orm을 사용해서 table을 만들 수 있다.)
 
+```python
+from sqlalchemy import Column, Boolean, Integer, String
+from sqlalchemy.orm import declarative_base
 
+Base = declarative_base()
+
+class Table(Base):
+    __tablename__ = "Something"
+    id = Column(Integer, ...)
+
+    def __repr__(self):
+        """조회시 출력되는 representive method"""
+        return f"~~~"
+```
 
