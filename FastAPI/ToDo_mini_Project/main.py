@@ -24,6 +24,9 @@ todo_data = {
     }
 }
 
-@app.get("/todos") # path 지정
-def get_todos_handler():
-    return list(todo_data.values())
+@app.get("/todos")
+def get_todos_handler(order: str):
+    ret = list(todo_data.values())
+    if order == "DESC":
+        return ret[::-1]
+    return ret
