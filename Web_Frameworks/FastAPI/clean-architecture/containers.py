@@ -10,5 +10,7 @@ class Container(containers.DeclarativeContainer):
         ],
     )
 
-    user_repo = providers.Factory(UserRepository)
-    user_service = providers.Factory(UserService, user_repo=user_repo)
+    user_repo = providers.Factory(UserRepository)  # UseRepository Instance 생성 Factory
+    user_service = providers.Factory(
+        UserService, user_repo=user_repo
+    )  # 생성하면서 user_repo 주입

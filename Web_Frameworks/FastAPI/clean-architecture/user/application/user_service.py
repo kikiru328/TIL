@@ -16,7 +16,7 @@ class UserService:
         self,
         user_repo: IUserRepository,
     ):
-        self.user_repo = user_repo
+        self.user_repo: IUserRepository = user_repo
         self.ulid = ULID()
         self.crypto = Crypto()
 
