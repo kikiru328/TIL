@@ -1,13 +1,13 @@
 # 구현체
 from fastapi import HTTPException
 from database import SessionLocal
-from user.domain.repository.user_repo import IuserRepository
+from user.domain.repository.user_repo import IUserRepository
 from user.domain.user import User as UserVO  # 구분을 위함 (database model)
 from user.infra.db_models.user import User
 from utils.db_utils import row_to_dict
 
 
-class UserRepository(IuserRepository):
+class UserRepository(IUserRepository):
     def save(self, user: UserVO):
         new_user = User(
             id=user.id,

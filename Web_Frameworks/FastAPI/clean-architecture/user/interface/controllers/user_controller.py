@@ -1,6 +1,8 @@
 # Router역할을 하는 것이 Controller
 # main은 이 controller의 모음
-from fastapi import APIRouter
+from dependency_injector.wiring import inject, Provide
+from containers import Container
+from fastapi import APIRouter, Depends
 from pydantic import BaseModel
 
 from user.application.user_service import UserService
@@ -15,8 +17,11 @@ class CreateUserBody(BaseModel):
 
 
 @router.post("", status_code=201)
-def create_user(user: CreateUserBody):
-    user_service = UserService()
+@inject
+def create_user(
+    user: CreateUserBody,
+    user_service: UserService = Depends(Provide[Container.user_service]),
+):
     created_user = user_service.create_user(
         name=user.name,
         email=user.email,

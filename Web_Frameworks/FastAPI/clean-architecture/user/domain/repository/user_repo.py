@@ -6,7 +6,7 @@ from abc import ABCMeta, abstractmethod
 from user.domain.user import User
 
 
-class IuserRepository(metaclass=ABCMeta):  # OOP Interface 선언
+class IUserRepository(metaclass=ABCMeta):  # OOP Interface 선언
     @abstractmethod  # 추상 클래스 실제 구현은 infra에서
     def save(self, user: User) -> None:  # 구현체가 이 함수를 구현하지 않으면 에러
         raise NotImplementedError

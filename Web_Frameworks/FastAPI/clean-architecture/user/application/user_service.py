@@ -1,17 +1,22 @@
 # Application == Usecase
 # 핵심. 저장, 에러, 암호화 등
+from datetime import datetime
+from dependency_injector.wiring import inject
 from fastapi import HTTPException
 from ulid import ULID
-from datetime import datetime
+
 from user.domain.user import User
-from user.domain.repository.user_repo import IuserRepository
-from user.infra.repository.user_repo import UserRepository
+from user.domain.repository.user_repo import IUserRepository
 from utils.crypto import Crypto
 
 
 class UserService:
-    def __init__(self):
-        self.user_repo: IuserRepository = UserRepository()
+    @inject  # dependency-inject
+    def __init__(
+        self,
+        user_repo: IUserRepository,
+    ):
+        self.user_repo = user_repo
         self.ulid = ULID()
         self.crypto = Crypto()
 
