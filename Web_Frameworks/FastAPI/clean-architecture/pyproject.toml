@@ -9,10 +9,37 @@ readme = "README.md"
 requires-python = ">=3.10"
 dependencies = [
     "fastapi (>=0.116.1,<0.117.0)",
-    "uvicorn (>=0.35.0,<0.36.0)"
+    "uvicorn (>=0.35.0,<0.36.0)",
+    "py-ulid (>=1.0.3,<2.0.0)",
+    "passlib[bcrypt] (>=1.7.4,<2.0.0)",
+    "sqlalchemy (>=2.0.41,<3.0.0)",
+    "mysqlclient (>=2.2.7,<3.0.0)",
+    "alembic (>=1.16.4,<2.0.0)",
 ]
 
 
 [build-system]
 requires = ["poetry-core>=2.0.0,<3.0.0"]
 build-backend = "poetry.core.masonry.api"
+
+[tool.mypy]
+python_version = "3.10"
+warn_return_any = true
+warn_unused_configs = true
+check_untyped_defs = true
+
+# 타입 스텁이 있는 라이브러리는 체크하고
+# 없는 것만 선별적으로 무시
+[[tool.mypy.overrides]]
+module = [
+    "ulid",
+    "passlib.*",
+    # 필요할 때마다 추가
+]
+ignore_missing_imports = true
+
+[tool.poetry.group.dev.dependencies]
+black = "^25.1.0"
+ruff = "^0.12.3"
+mypy = "^1.17.0"
+
