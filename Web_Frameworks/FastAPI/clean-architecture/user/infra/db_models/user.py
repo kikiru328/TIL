@@ -1,6 +1,6 @@
 # user database model
 from database import Base
-from sqlalchemy import String, DateTime
+from sqlalchemy import String, DateTime, Text
 from sqlalchemy.orm import Mapped, mapped_column
 from datetime import datetime
 
@@ -23,6 +23,10 @@ class User(Base):
     )
     password: Mapped[str] = mapped_column(
         String(64),
+        nullable=True,
+    )
+    memo: Mapped[str] = mapped_column(
+        Text,
         nullable=True,
     )
     created_at: Mapped[datetime] = mapped_column(
