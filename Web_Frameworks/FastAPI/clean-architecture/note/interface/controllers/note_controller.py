@@ -1,7 +1,7 @@
 from dataclasses import asdict
 from datetime import datetime
 from typing import Annotated
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, HTTPException
 from pydantic import BaseModel, Field
 from dependency_injector.wiring import inject, Provide
 
@@ -112,7 +112,7 @@ class UpdateNoteBody(BaseModel):
     tags: list[str] | None = Field(default=None)
 
 
-@router.get("/{id}", response_model=NoteResponse)
+@router.put("/{id}", response_model=NoteResponse)
 @inject
 def update_note(
     id: str,
@@ -124,13 +124,14 @@ def update_note(
         user_id=current_user.id,
         id=id,
         title=body.title,
-        content=body.title,
+        content=body.content,
         memo_date=body.memo_date,
         tag_names=body.tags,
     )
 
     response = asdict(note)
     response.update({"tags": [tag.name for tag in note.tags]})
+
     return response
 
 
@@ -170,7 +171,7 @@ def get_notes_by_tag(
         res_notes.append(note_dict)
 
     return {
-        "total_counts": total_count,
+        "total_count": total_count,
         "page": page,
         "notes": res_notes,
     }

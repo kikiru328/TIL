@@ -19,7 +19,7 @@ class NoteRepository(INoteRepository):
         with SessionLocal() as db:
             query = (
                 db.query(Note)
-                .options(joinedload(Note.tag))
+                .options(joinedload(Note.tags))
                 .filter(Note.user_id == user_id)
             )
             total_counts = query.count()

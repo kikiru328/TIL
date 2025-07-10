@@ -23,7 +23,7 @@ class Role(StrEnum):
 def create_access_token(
     payload: dict,
     role: Role,
-    expires_delta: timedelta = timedelta(minutes=1),
+    expires_delta: timedelta = timedelta(minutes=10),
 ):
     expire = datetime.utcnow() + expires_delta
     payload.update(
