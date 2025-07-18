@@ -50,7 +50,7 @@ def create_user(
     # user_service: UserService = Depends(Provide["user_service"]),
 ):
     created_user = user_service.create_user(
-        background_tasks=background_tasks,
+        # background_tasks=background_tasks,
         name=user.name,
         email=user.email,
         password=user.password,
