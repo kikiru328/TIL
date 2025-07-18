@@ -2,7 +2,7 @@
 # 핵심. 저장, 에러, 암호화 등
 from datetime import datetime
 from dependency_injector.wiring import inject
-from fastapi import HTTPException
+from fastapi import BackgroundTasks, HTTPException
 from ulid import ULID  # type: ignore
 
 from user.domain.user import User
@@ -12,19 +12,24 @@ from utils.crypto import Crypto
 from fastapi import status
 from common.auth import Role, create_access_token
 
+from user.application.email_service import EmailService
+
 
 class UserService:
     @inject  # dependency-inject
     def __init__(
         self,
         user_repo: IUserRepository,
+        email_service: EmailService,
     ):
         self.user_repo: IUserRepository = user_repo
         self.ulid = ULID()
         self.crypto = Crypto()
+        self.email_service = email_service
 
     def create_user(
         self,
+        background_tasks: BackgroundTasks,
         name: str,
         email: str,
         password: str,
@@ -51,6 +56,7 @@ class UserService:
             updated_at=now,
         )
         self.user_repo.save(user)
+        background_tasks.add_task(self.email_service.send_email, user.email)
         return user
 
     def update_user(

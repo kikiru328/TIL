@@ -1,6 +1,6 @@
 from datetime import datetime
 from dependency_injector.wiring import inject, Provide
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, BackgroundTasks, Depends
 from fastapi.security import OAuth2PasswordRequestForm
 from typing import Annotated
 from pydantic import BaseModel, EmailStr, Field
@@ -45,10 +45,12 @@ class UpdateUserBody(BaseModel):
 @inject
 def create_user(
     user: CreateUserBody,
+    background_tasks: BackgroundTasks,
     user_service: UserService = Depends(Provide[Container.user_service]),
     # user_service: UserService = Depends(Provide["user_service"]),
 ):
     created_user = user_service.create_user(
+        background_tasks=background_tasks,
         name=user.name,
         email=user.email,
         password=user.password,
